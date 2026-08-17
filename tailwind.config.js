@@ -1,4 +1,3 @@
-/** @type {import('tailwindcss').Config} */
 export default {
   content: [
     "./index.html",
@@ -32,7 +31,6 @@ export default {
         'fade-in': 'fadeIn 0.3s ease-in',
         'slide-up': 'slideUp 0.3s ease-out',
         'pulse-glow': 'pulseGlow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-        'bounce-gentle': 'bounceGentle 1s infinite',
       },
       keyframes: {
         fadeIn: {
@@ -46,10 +44,6 @@ export default {
         pulseGlow: {
           '0%, 100%': { opacity: '1' },
           '50%': { opacity: '0.7' },
-        },
-        bounceGentle: {
-          '0%, 100%': { transform: 'translateY(0)' },
-          '50%': { transform: 'translateY(-2px)' },
         },
       },
     },
