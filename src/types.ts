@@ -16,12 +16,14 @@ export interface User {
   avatar: string;
   banner: string;
   bio: string;
+  location?: string;
   customStatus?: CustomStatus;
   onlineStatus: OnlineStatus;
   level: number;
   xp: number;
   xpNeeded: number;
   badges: Badge[];
+  achievements?: string[];
   joinedDate: Date;
   socialLinks?: {
     twitter?: string;
@@ -30,6 +32,8 @@ export interface User {
     website?: string;
   };
   isPremium: boolean;
+  emailVerified?: boolean;
+  isStaff?: boolean;
 }
 
 export interface Badge {
@@ -79,6 +83,8 @@ export interface Community {
   ownerId: string;
   memberCount: number;
   onlineCount: number;
+  members: string[];
+  isMember?: boolean;
   createdAt: Date;
   rules: string[];
   rooms: Room[];
@@ -180,7 +186,7 @@ export interface SupportTicket {
   category: SupportCategory;
   title: string;
   description: string;
-  status: 'open' | 'inReview' | 'solved';
+  status: 'open' | 'in-review' | 'solved';
   replies: SupportReply[];
   createdAt: Date;
 }
@@ -206,4 +212,17 @@ export interface PollOption {
   id: string;
   text: string;
   votes: string[];
+}
+
+export interface Post {
+  id: string;
+  authorId: string;
+  authorName: string;
+  authorAvatar: string;
+  content: string;
+  timestamp: Date;
+  likes: number;
+  comments: number;
+  shares: number;
+  liked: boolean;
 }

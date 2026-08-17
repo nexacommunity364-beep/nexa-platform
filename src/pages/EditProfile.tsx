@@ -5,9 +5,10 @@ import { InputField } from '../components/InputField';
 import { Button } from '../components/Button';
 import { ArrowLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { Toast } from '../components/Toast';
 
 export const EditProfile: React.FC = () => {
-  const { currentUser } = useAppStore();
+  const { currentUser, updateCurrentUser } = useAppStore();
   const [displayName, setDisplayName] = useState(currentUser?.displayName || '');
   const [bio, setBio] = useState(currentUser?.bio || '');
   const [location, setLocation] = useState(currentUser?.location || '');
@@ -15,15 +16,16 @@ export const EditProfile: React.FC = () => {
 
   const handleSave = async () => {
     setSaving(true);
-    // Simulate API call
     await new Promise((resolve) => setTimeout(resolve, 1000));
+    updateCurrentUser({ displayName, bio, location });
+    Toast.success('Profile updated locally.');
     setSaving(false);
   };
 
   return (
     <MainLayout>
       <div className="max-w-2xl mx-auto p-6">
-        <Link to="/profile" className="flex items-center gap-2 text-nexa-400 hover:text-nexa-300 mb-6">
+        <Link to={`/profile/${currentUser?.username || ''}`} className="flex items-center gap-2 text-nexa-400 hover:text-nexa-300 mb-6">
           <ArrowLeft size={20} />
           Back to Profile
         </Link>
@@ -64,7 +66,7 @@ export const EditProfile: React.FC = () => {
             <Button onClick={handleSave} disabled={saving}>
               {saving ? 'Saving...' : 'Save Changes'}
             </Button>
-            <Link to="/profile">
+            <Link to={`/profile/${currentUser?.username || ''}`}>
               <Button variant="secondary">Cancel</Button>
             </Link>
           </div>

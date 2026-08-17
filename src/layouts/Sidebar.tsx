@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAppStore } from '../store/appStore';
 import {
   Home,
@@ -12,14 +12,14 @@ import {
   Shield,
   Zap,
   LogOut,
-  Plus,
 } from 'lucide-react';
 
 export const Sidebar: React.FC = () => {
   const location = useLocation();
-  const { currentUser } = useAppStore();
+  const navigate = useNavigate();
+  const { currentUser, setCurrentUser } = useAppStore();
 
-  const isActive = (path: string) => location.pathname === path;
+  const isActive = (path: string) => location.pathname === path || location.pathname.startsWith(`${path}/`);
 
   const mainLinks = [
     { path: '/home', label: 'Home', icon: Home },
@@ -36,6 +36,11 @@ export const Sidebar: React.FC = () => {
     { path: '/reports', label: 'Reports', icon: Shield },
     { path: '/settings', label: 'Settings', icon: Settings },
   ];
+
+  const handleLogout = () => {
+    setCurrentUser(null);
+    navigate('/login');
+  };
 
   return (
     <aside className="w-72 bg-dark-800 border-r border-dark-700 flex flex-col overflow-hidden">
@@ -95,7 +100,7 @@ export const Sidebar: React.FC = () => {
       {/* User Profile */}
       <div className="border-t border-dark-700 p-4 space-y-3">
         <Link
-          to="/profile"
+          to={currentUser ? `/profile/${currentUser.username}` : '/profile'}
           className="flex items-center gap-3 p-3 rounded-lg hover:bg-dark-700 transition"
         >
           {currentUser && (
@@ -112,7 +117,19 @@ export const Sidebar: React.FC = () => {
             </>
           )}
         </Link>
-        <button className="w-full flex items-center gap-2 px-4 py-2 rounded-lg bg-red-500/20 text-red-400 hover:bg-red-500/30 transition font-medium text-sm">
+        {currentUser?.isStaff && (
+          <Link
+            to="/admin"
+            className="w-full flex items-center gap-2 px-4 py-2 rounded-lg bg-nexa-500/10 text-nexa-300 hover:bg-nexa-500/20 transition font-medium text-sm"
+          >
+            <Shield size={16} />
+            Staff Admin Panel
+          </Link>
+        )}
+        <button
+          onClick={handleLogout}
+          className="w-full flex items-center gap-2 px-4 py-2 rounded-lg bg-red-500/20 text-red-400 hover:bg-red-500/30 transition font-medium text-sm"
+        >
           <LogOut size={16} />
           Log Out
         </button>

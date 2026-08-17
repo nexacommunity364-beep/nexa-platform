@@ -1,49 +1,26 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { MainLayout } from '../layouts/MainLayout';
-import { Bell, Heart, MessageCircle, UserPlus, Share2 } from 'lucide-react';
+import { AlertTriangle, Bell, Calendar, MessageCircle, UserPlus, Share2 } from 'lucide-react';
 import { Button } from '../components/Button';
-
-interface Notification {
-  id: string;
-  type: 'like' | 'comment' | 'follow' | 'message' | 'share';
-  authorName: string;
-  authorAvatar: string;
-  message: string;
-  timestamp: Date;
-  read: boolean;
-}
+import { useAppStore } from '../store/appStore';
 
 export const Notifications: React.FC = () => {
-  const [notifications, setNotifications] = useState<Notification[]>([
-    {
-      id: '1',
-      type: 'like',
-      authorName: 'John Doe',
-      authorAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=John',
-      message: 'liked your post',
-      timestamp: new Date(Date.now() - 3600000),
-      read: false,
-    },
-    {
-      id: '2',
-      type: 'follow',
-      authorName: 'Jane Smith',
-      authorAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Jane',
-      message: 'started following you',
-      timestamp: new Date(Date.now() - 7200000),
-      read: false,
-    },
-  ]);
+  const { notifications, markAllNotificationsAsRead, markNotificationAsRead } = useAppStore();
 
   const getIcon = (type: string) => {
     switch (type) {
-      case 'like':
-        return <Heart size={20} className="text-red-500" />;
-      case 'comment':
-        return <MessageCircle size={20} className="text-blue-500" />;
-      case 'follow':
+      case 'friendRequest':
+      case 'roleChange':
         return <UserPlus size={20} className="text-green-500" />;
-      case 'share':
+      case 'mention':
+      case 'reply':
+        return <MessageCircle size={20} className="text-blue-500" />;
+      case 'event':
+        return <Calendar size={20} className="text-red-500" />;
+      case 'warning':
+        return <AlertTriangle size={20} className="text-yellow-500" />;
+      case 'support':
+      case 'announcement':
         return <Share2 size={20} className="text-purple-500" />;
       default:
         return <Bell size={20} className="text-gray-500" />;
@@ -55,37 +32,35 @@ export const Notifications: React.FC = () => {
       <div className="max-w-2xl mx-auto p-6">
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-3xl font-bold text-white">Notifications</h1>
-          <Button variant="secondary" size="sm">
+          <Button variant="secondary" size="sm" onClick={markAllNotificationsAsRead}>
             Mark all as read
           </Button>
         </div>
 
         <div className="space-y-2">
           {notifications.map((notif) => (
-            <div
+            <button
               key={notif.id}
-              className={`flex items-center gap-4 p-4 rounded-lg border transition ${
-                notif.read
+              onClick={() => markNotificationAsRead(notif.id)}
+              className={`w-full flex items-center gap-4 p-4 rounded-lg border transition text-left ${
+                notif.isRead
                   ? 'bg-dark-800 border-dark-700'
                   : 'bg-nexa-600/10 border-nexa-500/50'
               }`}
             >
               <img
-                src={notif.authorAvatar}
-                alt={notif.authorName}
+                src="https://api.dicebear.com/7.x/shapes/svg?seed=nexa"
+                alt="Notification"
                 className="w-12 h-12 rounded-full flex-shrink-0"
               />
               <div className="flex-1">
-                <p className="text-white">
-                  <span className="font-semibold">{notif.authorName}</span>{' '}
-                  <span className="text-gray-400">{notif.message}</span>
-                </p>
+                <p className="text-white">{notif.content}</p>
                 <p className="text-xs text-gray-500 mt-1">
-                  {notif.timestamp.toLocaleString()}
+                  {notif.createdAt.toLocaleString()}
                 </p>
               </div>
               {getIcon(notif.type)}
-            </div>
+            </button>
           ))}
         </div>
       </div>

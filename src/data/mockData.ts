@@ -1,5 +1,5 @@
 // Mock data for Nexa platform
-import { User, Community, Room, Message, DirectMessage, Notification, CommunityEvent, CommunityRole, Badge, Friend } from '../types';
+import { User, Community, Room, Message, DirectMessage, Notification, CommunityEvent, CommunityRole, Friend, Post, SupportTicket } from '../types';
 
 const now = new Date();
 
@@ -11,6 +11,7 @@ export const MOCK_CURRENT_USER: User = {
   avatar: 'https://images.unsplash.com/photo-1535713566543-29f8c963277d?w=400&h=400&fit=crop',
   banner: 'https://images.unsplash.com/photo-1557821552-17105176677c?w=1200&h=300&fit=crop',
   bio: 'Developer | Building Nexa 🚀 | Gaming enthusiast',
+  location: 'Stockholm, Sweden',
   customStatus: {
     emoji: '🚀',
     text: 'Building Nexa',
@@ -24,12 +25,16 @@ export const MOCK_CURRENT_USER: User = {
     { id: 'badge-1', name: 'Founder', icon: '👑', description: 'Nexa Founder' },
     { id: 'badge-2', name: 'Developer', icon: '💻', description: 'Active Developer' },
   ],
+  achievements: ['Launched first community', 'Reached level 25', 'Hosted 10 events'],
   joinedDate: new Date('2024-01-15'),
   socialLinks: {
     twitter: 'https://twitter.com',
     twitch: 'https://twitch.tv',
+    website: 'https://nexa.dev',
   },
   isPremium: true,
+  emailVerified: true,
+  isStaff: true,
 };
 
 export const MOCK_USERS: User[] = [
@@ -42,13 +47,16 @@ export const MOCK_USERS: User[] = [
     avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=400&fit=crop',
     banner: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&h=300&fit=crop',
     bio: 'Game developer and streamer',
+    location: 'Berlin, Germany',
     onlineStatus: 'online',
     level: 24,
     xp: 4500,
     xpNeeded: 6000,
     badges: [{ id: 'badge-3', name: 'Streamer', icon: '📡', description: 'Active Streamer' }],
+    achievements: ['Won 3 community events'],
     joinedDate: new Date('2024-02-10'),
     isPremium: true,
+    emailVerified: true,
   },
   {
     id: 'user-3',
@@ -58,13 +66,16 @@ export const MOCK_USERS: User[] = [
     avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop',
     banner: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=1200&h=300&fit=crop',
     bio: 'Roblox and Minecraft enthusiast',
+    location: 'Toronto, Canada',
     onlineStatus: 'idle',
     level: 19,
     xp: 2800,
     xpNeeded: 5000,
     badges: [],
+    achievements: ['Shared 25 screenshots'],
     joinedDate: new Date('2024-03-05'),
     isPremium: false,
+    emailVerified: true,
   },
   {
     id: 'user-4',
@@ -74,6 +85,7 @@ export const MOCK_USERS: User[] = [
     avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop',
     banner: 'https://images.unsplash.com/photo-1505142468610-359e7d316be0?w=1200&h=300&fit=crop',
     bio: 'Full-stack developer',
+    location: 'Austin, USA',
     onlineStatus: 'online',
     level: 31,
     xp: 7200,
@@ -82,8 +94,10 @@ export const MOCK_USERS: User[] = [
       { id: 'badge-4', name: 'Developer', icon: '💻', description: 'Active Developer' },
       { id: 'badge-5', name: 'Helper', icon: '🤝', description: 'Community Helper' }
     ],
+    achievements: ['Moderated 50 reports', 'Built 6 room bots'],
     joinedDate: new Date('2024-01-20'),
     isPremium: true,
+    emailVerified: true,
   },
 ];
 
@@ -105,6 +119,8 @@ export const MOCK_COMMUNITIES: Community[] = [
     ownerId: 'user-1',
     memberCount: 24820,
     onlineCount: 3281,
+    members: ['user-1', 'user-2', 'user-4'],
+    isMember: true,
     createdAt: new Date('2024-01-01'),
     rules: [
       'Respect other members',
@@ -116,6 +132,7 @@ export const MOCK_COMMUNITIES: Community[] = [
     rooms: [],
     roles: [],
     events: [],
+    inviteCode: 'NEXA-GAME',
   },
   {
     id: 'community-2',
@@ -128,11 +145,14 @@ export const MOCK_COMMUNITIES: Community[] = [
     ownerId: 'user-2',
     memberCount: 15420,
     onlineCount: 2103,
+    members: ['user-2', 'user-1'],
+    isMember: true,
     createdAt: new Date('2024-02-01'),
     rules: ['Share builds respectfully', 'No stolen content', 'Help others learn'],
     rooms: [],
     roles: [],
     events: [],
+    inviteCode: 'ROBLOX-BLD',
   },
   {
     id: 'community-3',
@@ -145,11 +165,14 @@ export const MOCK_COMMUNITIES: Community[] = [
     ownerId: 'user-3',
     memberCount: 32150,
     onlineCount: 5420,
+    members: ['user-3'],
+    isMember: false,
     createdAt: new Date('2024-01-15'),
     rules: ['No griefing discussions', 'Share amazing builds', 'Be friendly'],
     rooms: [],
     roles: [],
     events: [],
+    inviteCode: 'MINECRAFT',
   },
   {
     id: 'community-4',
@@ -162,11 +185,41 @@ export const MOCK_COMMUNITIES: Community[] = [
     ownerId: 'user-4',
     memberCount: 8960,
     onlineCount: 1230,
+    members: ['user-4', 'user-1'],
+    isMember: true,
     createdAt: new Date('2024-03-01'),
     rules: ['Share helpful resources', 'Ask questions', 'Support others'],
     rooms: [],
     roles: [],
     events: [],
+    inviteCode: 'WEB-DEV',
+  },
+];
+
+export const MOCK_POSTS: Post[] = [
+  {
+    id: 'post-1',
+    authorId: 'user-2',
+    authorName: 'Alex',
+    authorAvatar: MOCK_USERS[1].avatar,
+    content: 'Wrapped up a new event banner pack for our gaming community. Excited to share it tonight!',
+    timestamp: new Date(now.getTime() - 90 * 60000),
+    likes: 28,
+    comments: 7,
+    shares: 3,
+    liked: false,
+  },
+  {
+    id: 'post-2',
+    authorId: 'user-4',
+    authorName: 'Jordan',
+    authorAvatar: MOCK_USERS[3].avatar,
+    content: 'Web Dev Hub just opened a new Room for accessibility reviews. Bring your UI experiments and we will test them together.',
+    timestamp: new Date(now.getTime() - 4 * 60 * 60000),
+    likes: 54,
+    comments: 12,
+    shares: 8,
+    liked: true,
   },
 ];
 
@@ -319,6 +372,24 @@ export const MOCK_NOTIFICATIONS: Notification[] = [
     isRead: true,
     createdAt: new Date(now.getTime() - 2 * 60 * 60000),
   },
+  {
+    id: 'notif-4',
+    userId: 'user-1',
+    type: 'event',
+    content: 'Roblox Game Night starts in 2 days',
+    relatedId: 'event-1',
+    isRead: false,
+    createdAt: new Date(now.getTime() - 15 * 60000),
+  },
+  {
+    id: 'notif-5',
+    userId: 'user-1',
+    type: 'support',
+    content: 'Support replied to your billing request',
+    relatedId: 'ticket-2',
+    isRead: false,
+    createdAt: new Date(now.getTime() - 10 * 60000),
+  },
 ];
 
 export const MOCK_EVENTS: CommunityEvent[] = [
@@ -379,5 +450,35 @@ export const MOCK_ROLES: CommunityRole[] = [
     permissions: ['send_messages', 'read_messages'],
     isPermanent: false,
     members: ['user-3'],
+  },
+];
+
+export const MOCK_SUPPORT_TICKETS: SupportTicket[] = [
+  {
+    id: 'ticket-1',
+    userId: 'user-1',
+    category: 'bug',
+    title: 'Images fail to upload in Safari',
+    description: 'The upload preview stalls after selecting an image on Safari 18.',
+    status: 'open',
+    createdAt: new Date(now.getTime() - 3 * 24 * 60 * 60000),
+    replies: [],
+  },
+  {
+    id: 'ticket-2',
+    userId: 'user-1',
+    category: 'billing',
+    title: 'Need help with Premium renewal date',
+    description: 'I want to confirm when the yearly Premium plan renews in the demo billing portal.',
+    status: 'in-review',
+    createdAt: new Date(now.getTime() - 24 * 60 * 60000),
+    replies: [
+      {
+        id: 'reply-1',
+        authorId: 'user-4',
+        content: 'We are checking the billing timeline and will follow up shortly.',
+        createdAt: new Date(now.getTime() - 12 * 60 * 60000),
+      },
+    ],
   },
 ];

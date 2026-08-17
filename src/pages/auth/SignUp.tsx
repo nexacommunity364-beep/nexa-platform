@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { InputField } from '../components/InputField';
-import { Button } from '../components/Button';
-import { Mail, Lock, User, Calendar } from 'lucide-react';
+import { InputField } from '../../components/InputField';
+import { Button } from '../../components/Button';
+import { Toast } from '../../components/Toast';
+import { MOCK_CURRENT_USER } from '../../data/mockData';
+import { useAppStore } from '../../store/appStore';
 
 export const SignUp: React.FC = () => {
   const navigate = useNavigate();
+  const { setCurrentUser } = useAppStore();
   const [formData, setFormData] = useState({
     displayName: '',
     username: '',
@@ -15,6 +18,7 @@ export const SignUp: React.FC = () => {
     dateOfBirth: '',
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [verificationSent, setVerificationSent] = useState(false);
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
@@ -32,14 +36,25 @@ export const SignUp: React.FC = () => {
 
   const handleSignUp = () => {
     if (validateForm()) {
-      navigate('/home');
+      setVerificationSent(true);
+      Toast.success('Verification email sent to your demo inbox.');
     }
+  };
+
+  const handleCompleteVerification = () => {
+    setCurrentUser({
+      ...MOCK_CURRENT_USER,
+      displayName: formData.displayName,
+      username: formData.username,
+      email: formData.email,
+      emailVerified: true,
+    });
+    navigate('/home');
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-dark-900 via-dark-800 to-dark-900 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
-        {/* Logo */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center gap-2 mb-4">
             <div className="w-12 h-12 bg-gradient-to-br from-nexa-500 to-nexa-700 rounded-lg flex items-center justify-center font-bold text-2xl text-white shadow-lg shadow-nexa-500/50">
@@ -51,99 +66,89 @@ export const SignUp: React.FC = () => {
           <p className="text-gray-400 mt-2">Your Community. Your Space. Your Way.</p>
         </div>
 
-        {/* Form */}
         <div className="bg-dark-800 rounded-lg p-6 border border-dark-700 shadow-2xl">
-          <div className="space-y-4">
-            <InputField
-              label="Display Name"
-              placeholder="Your name"
-              value={formData.displayName}
-              onChange={(value) => setFormData({ ...formData, displayName: value })}
-              error={errors.displayName}
-              required
-            />
-
-            <InputField
-              label="Username"
-              placeholder="@username"
-              value={formData.username}
-              onChange={(value) => setFormData({ ...formData, username: value })}
-              error={errors.username}
-              required
-              helperText="This will be unique to your account"
-            />
-
-            <InputField
-              label="Email"
-              type="email"
-              placeholder="your@email.com"
-              value={formData.email}
-              onChange={(value) => setFormData({ ...formData, email: value })}
-              error={errors.email}
-              required
-            />
-
-            <InputField
-              label="Password"
-              type="password"
-              placeholder="••••••••"
-              value={formData.password}
-              onChange={(value) => setFormData({ ...formData, password: value })}
-              error={errors.password}
-              required
-              helperText="Minimum 8 characters"
-            />
-
-            <InputField
-              label="Confirm Password"
-              type="password"
-              placeholder="••••••••"
-              value={formData.confirmPassword}
-              onChange={(value) => setFormData({ ...formData, confirmPassword: value })}
-              error={errors.confirmPassword}
-              required
-            />
-
-            <InputField
-              label="Date of Birth"
-              type="date"
-              value={formData.dateOfBirth}
-              onChange={(value) => setFormData({ ...formData, dateOfBirth: value })}
-              error={errors.dateOfBirth}
-              required
-            />
-          </div>
-
-          <Button
-            fullWidth
-            className="mt-6"
-            onClick={handleSignUp}
-          >
-            Create Account
-          </Button>
-
-          <div className="relative my-6">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-dark-700"></div>
+          {verificationSent ? (
+            <div className="text-center space-y-4 py-6">
+              <div className="w-16 h-16 mx-auto bg-nexa-500/10 border border-nexa-500/40 rounded-full flex items-center justify-center text-2xl">
+                ✉️
+              </div>
+              <div>
+                <h2 className="text-xl font-bold text-white mb-2">Verify your email</h2>
+                <p className="text-gray-400">
+                  We sent a demo verification link to <span className="text-white">{formData.email}</span>.
+                </p>
+              </div>
+              <Button fullWidth onClick={handleCompleteVerification}>
+                I verified my email
+              </Button>
+              <Button variant="secondary" fullWidth onClick={() => setVerificationSent(false)}>
+                Back to sign up
+              </Button>
             </div>
-            <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-dark-800 text-gray-500">Or continue with</span>
-            </div>
-          </div>
-
-          <Button
-            variant="secondary"
-            fullWidth
-            className="mb-4"
-          >
-            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M15.545 6.558a9.42 9.42 0 01.139 1.626c0 2.889-2.126 5.413-4.953 5.413-2.829 0-5.155-2.524-5.155-5.413 0-.55.062-1.08.181-1.594m0-4.894a9.42 9.42 0 00-.139-1.626c0-2.889 2.126-5.413 4.953-5.413 2.829 0 5.155 2.524 5.155 5.413 0 .55-.062 1.08-.181 1.594" />
-            </svg>
-            Google
-          </Button>
+          ) : (
+            <>
+              <div className="space-y-4">
+                <InputField
+                  label="Display Name"
+                  placeholder="Your name"
+                  value={formData.displayName}
+                  onChange={(value) => setFormData({ ...formData, displayName: value })}
+                  error={errors.displayName}
+                  required
+                />
+                <InputField
+                  label="Username"
+                  placeholder="@username"
+                  value={formData.username}
+                  onChange={(value) => setFormData({ ...formData, username: value })}
+                  error={errors.username}
+                  required
+                  helperText="This will be unique to your account"
+                />
+                <InputField
+                  label="Email"
+                  type="email"
+                  placeholder="your@email.com"
+                  value={formData.email}
+                  onChange={(value) => setFormData({ ...formData, email: value })}
+                  error={errors.email}
+                  required
+                />
+                <InputField
+                  label="Password"
+                  type="password"
+                  placeholder="••••••••"
+                  value={formData.password}
+                  onChange={(value) => setFormData({ ...formData, password: value })}
+                  error={errors.password}
+                  required
+                  helperText="Minimum 8 characters"
+                />
+                <InputField
+                  label="Confirm Password"
+                  type="password"
+                  placeholder="••••••••"
+                  value={formData.confirmPassword}
+                  onChange={(value) => setFormData({ ...formData, confirmPassword: value })}
+                  error={errors.confirmPassword}
+                  required
+                />
+                <InputField
+                  label="Date of Birth"
+                  type="date"
+                  value={formData.dateOfBirth}
+                  onChange={(value) => setFormData({ ...formData, dateOfBirth: value })}
+                  error={errors.dateOfBirth}
+                  required
+                />
+              </div>
+              <Button fullWidth className="mt-6" onClick={handleSignUp}>
+                Create Account
+              </Button>
+            </>
+          )}
         </div>
 
-        {/* Footer */}
         <p className="text-center text-gray-400 text-sm mt-6">
           Already have an account?{' '}
           <button

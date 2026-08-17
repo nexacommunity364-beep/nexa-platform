@@ -1,5 +1,6 @@
 import React from 'react';
 import { Users, Lock, Globe } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { Button } from './Button';
 
 interface CommunityCardProps {
@@ -11,9 +12,12 @@ interface CommunityCardProps {
   banner?: string;
   category?: string;
   isPublic?: boolean;
+  actionLabel?: string;
+  onAction?: () => void;
 }
 
 export const CommunityCard: React.FC<CommunityCardProps> = ({
+  id,
   name,
   icon,
   description,
@@ -21,6 +25,8 @@ export const CommunityCard: React.FC<CommunityCardProps> = ({
   banner,
   category,
   isPublic = true,
+  actionLabel = 'Join',
+  onAction,
 }) => {
   return (
     <div className="rounded-lg overflow-hidden bg-dark-800 border border-dark-700 hover:border-nexa-500 transition hover:shadow-lg hover:shadow-nexa-500/10">
@@ -35,13 +41,13 @@ export const CommunityCard: React.FC<CommunityCardProps> = ({
       {/* Content */}
       <div className="p-4">
         <div className="flex items-start justify-between mb-2">
-          <div className="flex items-center gap-2">
+          <Link to={`/communities/${id}`} className="flex items-center gap-2 min-w-0">
             <span className="text-2xl">{icon}</span>
-            <div>
+            <div className="min-w-0">
               <h3 className="font-bold text-white">{name}</h3>
               {category && <p className="text-xs text-gray-400">{category}</p>}
             </div>
-          </div>
+          </Link>
           {!isPublic && <Lock size={16} className="text-gray-500" />}
           {isPublic && <Globe size={16} className="text-gray-500" />}
         </div>
@@ -53,7 +59,11 @@ export const CommunityCard: React.FC<CommunityCardProps> = ({
             <Users size={14} />
             {members.toLocaleString()} members
           </div>
-          <Button size="sm">Join</Button>
+          {onAction && (
+            <Button size="sm" onClick={onAction}>
+              {actionLabel}
+            </Button>
+          )}
         </div>
       </div>
     </div>

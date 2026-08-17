@@ -3,13 +3,14 @@ import { MainLayout } from '../layouts/MainLayout';
 import { InputField } from '../components/InputField';
 import { CommunityCard } from '../components/CommunityCard';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/Tabs';
-import { MOCK_COMMUNITIES } from '../data/mockData';
+import { useAppStore } from '../store/appStore';
 
 export const Communities: React.FC = () => {
+  const { communities, toggleCommunityMembership } = useAppStore();
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState('joined');
 
-  const filteredCommunities = MOCK_COMMUNITIES.filter((community) =>
+  const filteredCommunities = communities.filter((community) =>
     community.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     community.description.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -50,9 +51,12 @@ export const Communities: React.FC = () => {
                     icon={community.icon}
                     name={community.name}
                     description={community.description}
-                    members={community.members}
+                    members={community.memberCount}
+                    banner={community.banner}
                     category={community.category}
                     isPublic={community.isPublic}
+                    actionLabel="Leave"
+                    onAction={() => toggleCommunityMembership(community.id)}
                   />
                 ))}
               </div>
@@ -73,9 +77,12 @@ export const Communities: React.FC = () => {
                     icon={community.icon}
                     name={community.name}
                     description={community.description}
-                    members={community.members}
+                    members={community.memberCount}
+                    banner={community.banner}
                     category={community.category}
                     isPublic={community.isPublic}
+                    actionLabel={community.isMember ? 'Leave' : 'Join'}
+                    onAction={() => toggleCommunityMembership(community.id)}
                   />
                 ))}
               </div>

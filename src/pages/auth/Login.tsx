@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { InputField } from '../components/InputField';
-import { Button } from '../components/Button';
-import { Mail, Lock } from 'lucide-react';
+import { InputField } from '../../components/InputField';
+import { Button } from '../../components/Button';
+import { Toast } from '../../components/Toast';
+import { MOCK_CURRENT_USER } from '../../data/mockData';
+import { useAppStore } from '../../store/appStore';
 
 export const Login: React.FC = () => {
   const navigate = useNavigate();
+  const { setCurrentUser } = useAppStore();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -17,10 +20,18 @@ export const Login: React.FC = () => {
     if (password.length < 8) newErrors.password = 'Password must be at least 8 characters';
 
     if (Object.keys(newErrors).length === 0) {
+      setCurrentUser(MOCK_CURRENT_USER);
+      Toast.success('Welcome back to Nexa.');
       navigate('/home');
     } else {
       setErrors(newErrors);
     }
+  };
+
+  const handleGoogleLogin = () => {
+    setCurrentUser(MOCK_CURRENT_USER);
+    Toast.info('Signed in with the Google demo flow.');
+    navigate('/home');
   };
 
   return (
@@ -92,6 +103,7 @@ export const Login: React.FC = () => {
             variant="secondary"
             fullWidth
             className="mb-4"
+            onClick={handleGoogleLogin}
           >
             <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
               <path d="M15.545 6.558a9.42 9.42 0 01.139 1.626c0 2.889-2.126 5.413-4.953 5.413-2.829 0-5.155-2.524-5.155-5.413 0-.55.062-1.08.181-1.594m0-4.894a9.42 9.42 0 00-.139-1.626c0-2.889 2.126-5.413 4.953-5.413 2.829 0 5.155 2.524 5.155 5.413 0 .55-.062 1.08-.181 1.594" />

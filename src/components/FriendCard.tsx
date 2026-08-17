@@ -1,6 +1,6 @@
 import React from 'react';
-import { UserPlus, MessageSquare, MoreVertical } from 'lucide-react';
-import { useAppStore } from '../store/appStore';
+import { User, MessageSquare, MoreVertical } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { MOCK_USERS } from '../data/mockData';
 
 interface FriendCardProps {
@@ -45,14 +45,20 @@ export const FriendCard: React.FC<FriendCardProps> = ({ userId }) => {
       <p className="text-xs text-gray-400 truncate">@{user.username}</p>
 
       <div className="flex gap-2 mt-4">
-        <button className="flex-1 flex items-center justify-center gap-1 px-2 py-2 rounded-lg bg-nexa-600 hover:bg-nexa-700 text-white transition text-xs font-medium">
+        <Link
+          to={`/messages/${user.id}`}
+          className="flex-1 flex items-center justify-center gap-1 px-2 py-2 rounded-lg bg-nexa-600 hover:bg-nexa-700 text-white transition text-xs font-medium"
+        >
           <MessageSquare size={14} />
           Message
-        </button>
-        <button className="flex-1 flex items-center justify-center gap-1 px-2 py-2 rounded-lg bg-dark-700 hover:bg-dark-600 text-gray-300 transition text-xs font-medium">
-          <UserPlus size={14} />
+        </Link>
+        <Link
+          to={`/profile/${user.username}`}
+          className="flex-1 flex items-center justify-center gap-1 px-2 py-2 rounded-lg bg-dark-700 hover:bg-dark-600 text-gray-300 transition text-xs font-medium"
+        >
+          <User size={14} />
           Profile
-        </button>
+        </Link>
       </div>
     </div>
   );
