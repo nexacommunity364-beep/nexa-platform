@@ -1,193 +1,131 @@
 import React, { useState } from 'react';
 import { MainLayout } from '../layouts/MainLayout';
 import { Button } from '../components/Button';
-import { Star, Check, Zap, Sparkles, Heart, Gift } from 'lucide-react';
+import { Check, Zap } from 'lucide-react';
+
+interface PlanFeature {
+  name: string;
+  included: boolean;
+}
+
+interface Plan {
+  name: string;
+  price: number;
+  features: PlanFeature[];
+  popular?: boolean;
+}
 
 export const Premium: React.FC = () => {
-  const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'yearly'>('monthly');
+  const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly');
 
-  const plans = [
+  const plans: Plan[] = [
     {
-      name: 'Free',
-      price: '$0',
-      period: 'forever',
-      description: 'Perfect for getting started',
+      name: 'Basic',
+      price: billingCycle === 'monthly' ? 4.99 : 49.99,
       features: [
-        'Basic messaging',
-        'Create communities',
-        'Join up to 50 communities',
-        'Standard profile',
-        'Basic customization',
-        'Community features',
+        { name: 'Ad-free experience', included: true },
+        { name: 'Premium badge', included: true },
+        { name: 'Higher upload limits', included: false },
+        { name: 'Custom themes', included: false },
       ],
-      recommended: false,
     },
     {
-      name: 'Premium+',
-      price: billingPeriod === 'monthly' ? '$9.99' : '$99.99',
-      period: billingPeriod === 'monthly' ? '/month' : '/year',
-      description: 'For power users',
+      name: 'Pro',
+      price: billingCycle === 'monthly' ? 9.99 : 99.99,
+      popular: true,
       features: [
-        'Priority support',
-        'Premium badge',
-        'Custom status effects',
-        'Animated profile banner',
-        'Animated avatar',
-        '100 GB upload limit',
-        'Advanced community features',
-        'Custom community themes',
-        'Early access to features',
-        'Premium only events',
+        { name: 'Ad-free experience', included: true },
+        { name: 'Premium badge', included: true },
+        { name: 'Higher upload limits', included: true },
+        { name: 'Custom themes', included: true },
       ],
-      recommended: true,
-      icon: Star,
     },
     {
-      name: 'Elite',
-      price: billingPeriod === 'monthly' ? '$19.99' : '$199.99',
-      period: billingPeriod === 'monthly' ? '/month' : '/year',
-      description: 'Ultimate experience',
+      name: 'Ultimate',
+      price: billingCycle === 'monthly' ? 19.99 : 199.99,
       features: [
-        'Everything in Premium+',
-        '24/7 priority support',
-        'Custom emoji pack',
-        'Profile animation package',
-        'Exclusive badges',
-        'Unlimited uploads',
-        'Ad-free experience',
-        'Premium community templates',
-        'VIP event access',
-        'Direct creator support channel',
-        'Custom domain for community',
+        { name: 'Ad-free experience', included: true },
+        { name: 'Premium badge', included: true },
+        { name: 'Higher upload limits', included: true },
+        { name: 'Custom themes', included: true },
       ],
-      recommended: false,
-      icon: Sparkles,
     },
   ];
 
   return (
     <MainLayout>
-      <div className="max-w-7xl mx-auto p-6">
-        {/* Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-white mb-2">Nexa Premium</h1>
-          <p className="text-gray-400 text-lg">Unlock exclusive features and support the platform</p>
-        </div>
+      <div className="max-w-6xl mx-auto p-6">
+        <h1 className="text-3xl font-bold text-white mb-2">Nexa Premium</h1>
+        <p className="text-gray-400 mb-8">Unlock exclusive features and support the platform</p>
 
-        {/* Billing Toggle */}
-        <div className="flex items-center justify-center gap-4 mb-12">
-          <span className={`font-medium ${
-            billingPeriod === 'monthly' ? 'text-white' : 'text-gray-400'
-          }`}>
-            Monthly
-          </span>
+        {/* Billing Cycle Toggle */}
+        <div className="flex justify-center gap-4 mb-12">
           <button
-            onClick={() => setBillingPeriod(billingPeriod === 'monthly' ? 'yearly' : 'monthly')}
-            className="relative w-16 h-8 bg-nexa-600 rounded-full transition"
+            onClick={() => setBillingCycle('monthly')}
+            className={`px-6 py-2 rounded-lg font-medium transition ${
+              billingCycle === 'monthly'
+                ? 'bg-nexa-600 text-white'
+                : 'bg-dark-700 text-gray-300 hover:bg-dark-600'
+            }`}
           >
-            <div
-              className={`absolute top-1 w-6 h-6 bg-white rounded-full transition-transform ${
-                billingPeriod === 'yearly' ? 'translate-x-8' : 'translate-x-1'
-              }`}
-            ></div>
+            Monthly
           </button>
-          <span className={`font-medium ${
-            billingPeriod === 'yearly' ? 'text-white' : 'text-gray-400'
-          }`}>
-            Yearly
-            <span className="ml-2 text-xs bg-green-500/20 text-green-400 px-2 py-1 rounded-full">Save 17%</span>
-          </span>
+          <button
+            onClick={() => setBillingCycle('yearly')}
+            className={`px-6 py-2 rounded-lg font-medium transition ${
+              billingCycle === 'yearly'
+                ? 'bg-nexa-600 text-white'
+                : 'bg-dark-700 text-gray-300 hover:bg-dark-600'
+            }`}
+          >
+            Yearly (Save 17%)
+          </button>
         </div>
 
-        {/* Plans */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-          {plans.map((plan, idx) => {
-            const Icon = plan.icon;
-            return (
-              <div
-                key={idx}
-                className={`rounded-lg border transition relative ${
-                  plan.recommended
-                    ? 'bg-gradient-to-b from-nexa-600/20 to-nexa-700/10 border-nexa-500 ring-2 ring-nexa-500/30 scale-105'
-                    : 'bg-dark-800 border-dark-700 hover:border-dark-600'
-                }`}
-              >
-                {plan.recommended && (
-                  <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                    <span className="bg-nexa-600 text-white text-xs font-bold px-3 py-1 rounded-full">
-                      RECOMMENDED
-                    </span>
-                  </div>
-                )}
+        {/* Plans Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {plans.map((plan, i) => (
+            <div
+              key={i}
+              className={`rounded-lg border transition ${
+                plan.popular
+                  ? 'bg-nexa-600/20 border-nexa-500 shadow-lg shadow-nexa-500/20'
+                  : 'bg-dark-800 border-dark-700 hover:border-nexa-500'
+              }`}
+            >
+              {plan.popular && (
+                <div className="px-6 py-2 bg-nexa-600 text-white text-center font-bold text-sm">
+                  Most Popular
+                </div>
+              )}
 
-                <div className="p-6">
-                  <div className="flex items-center gap-2 mb-2">
-                    {Icon && <Icon size={24} className="text-nexa-400" />}
-                    <h3 className="text-2xl font-bold text-white">{plan.name}</h3>
-                  </div>
-                  <p className="text-gray-400 text-sm mb-4">{plan.description}</p>
+              <div className="p-6">
+                <h3 className="text-2xl font-bold text-white mb-2">{plan.name}</h3>
+                <div className="mb-6">
+                  <span className="text-4xl font-bold text-white">${plan.price}</span>
+                  <span className="text-gray-400">/{billingCycle === 'monthly' ? 'month' : 'year'}</span>
+                </div>
 
-                  <div className="mb-6">
-                    <div className="flex items-baseline">
-                      <span className="text-3xl font-bold text-white">{plan.price}</span>
-                      <span className="text-gray-400 ml-1">{plan.period}</span>
+                <Button fullWidth className="mb-6">
+                  Subscribe Now
+                </Button>
+
+                <div className="space-y-3">
+                  {plan.features.map((feature, j) => (
+                    <div key={j} className="flex items-center gap-2">
+                      <Check
+                        size={18}
+                        className={feature.included ? 'text-green-500' : 'text-gray-600'}
+                      />
+                      <span className={feature.included ? 'text-white' : 'text-gray-500'}>
+                        {feature.name}
+                      </span>
                     </div>
-                  </div>
-
-                  <Button fullWidth className="mb-6" variant={plan.recommended ? 'primary' : 'secondary'}>
-                    {plan.name === 'Free' ? 'Current Plan' : 'Upgrade Now'}
-                  </Button>
-
-                  <div className="space-y-3">
-                    {plan.features.map((feature, fidx) => (
-                      <div key={fidx} className="flex items-center gap-2">
-                        <Check size={16} className="text-green-400 flex-shrink-0" />
-                        <span className="text-sm text-gray-300">{feature}</span>
-                      </div>
-                    ))}
-                  </div>
+                  ))}
                 </div>
               </div>
-            );
-          })}
-        </div>
-
-        {/* FAQ */}
-        <div className="max-w-2xl mx-auto">
-          <h2 className="text-2xl font-bold text-white mb-6 text-center">FAQ</h2>
-          <div className="space-y-4">
-            {[
-              {
-                q: 'Can I cancel anytime?',
-                a: 'Yes, you can cancel your subscription at any time. No questions asked.',
-              },
-              {
-                q: 'Is there a free trial?',
-                a: 'Yes! Try Premium+ free for 7 days. No credit card required.',
-              },
-              {
-                q: 'What payment methods do you accept?',
-                a: 'We accept all major credit cards, PayPal, and cryptocurrency.',
-              },
-              {
-                q: 'Do I get a refund if I cancel?',
-                a: 'Refunds are available within 30 days of purchase.',
-              },
-            ].map((faq, idx) => (
-              <details
-                key={idx}
-                className="bg-dark-800 rounded-lg border border-dark-700 hover:border-dark-600 transition group"
-              >
-                <summary className="p-4 cursor-pointer font-medium text-white flex items-center justify-between">
-                  {faq.q}
-                  <span className="group-open:rotate-180 transition">
-                    ▼
-                  </span>
-                </summary>
-                <p className="px-4 pb-4 text-gray-400">{faq.a}</p>
-              </details>
-            ))}
-          </div>
+            </div>
+          ))}
         </div>
       </div>
     </MainLayout>

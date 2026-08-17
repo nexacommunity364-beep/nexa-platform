@@ -1,68 +1,72 @@
 import React, { useState } from 'react';
 import { MainLayout } from '../layouts/MainLayout';
-import { Button } from '../components/Button';
+import { useAppStore } from '../store/appStore';
 import { InputField } from '../components/InputField';
-import { MOCK_USERS } from '../data/mockData';
+import { Button } from '../components/Button';
+import { ArrowLeft } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 export const EditProfile: React.FC = () => {
-  const user = MOCK_USERS[0];
-  const [formData, setFormData] = useState({
-    displayName: user.displayName,
-    bio: user.bio,
-    location: user.location,
-    website: 'example.com',
-  });
+  const { currentUser } = useAppStore();
+  const [displayName, setDisplayName] = useState(currentUser?.displayName || '');
+  const [bio, setBio] = useState(currentUser?.bio || '');
+  const [location, setLocation] = useState(currentUser?.location || '');
+  const [saving, setSaving] = useState(false);
 
-  const handleChange = (field: string, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
+  const handleSave = async () => {
+    setSaving(true);
+    // Simulate API call
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    setSaving(false);
   };
 
   return (
     <MainLayout>
-      <div className="max-w-2xl mx-auto py-8 px-4">
-        <div className="bg-dark-800 rounded-lg border border-dark-700 p-8">
-          <h1 className="text-3xl font-bold text-white mb-8">Edit Profile</h1>
+      <div className="max-w-2xl mx-auto p-6">
+        <Link to="/profile" className="flex items-center gap-2 text-nexa-400 hover:text-nexa-300 mb-6">
+          <ArrowLeft size={20} />
+          Back to Profile
+        </Link>
 
-          {/* Avatar Section */}
-          <div className="mb-8">
-            <label className="block text-sm font-medium text-gray-300 mb-4">Profile Picture</label>
-            <div className="flex items-center gap-4">
-              <img src={user.avatar} alt="avatar" className="w-20 h-20 rounded-full" />
-              <Button variant="secondary">Upload New Photo</Button>
+        <div className="bg-dark-800 rounded-lg p-6 border border-dark-700">
+          <h1 className="text-2xl font-bold text-white mb-6">Edit Profile</h1>
+
+          <div className="space-y-4">
+            <InputField
+              label="Display Name"
+              placeholder="Your name"
+              value={displayName}
+              onChange={setDisplayName}
+            />
+
+            <InputField
+              label="Location"
+              placeholder="City, Country"
+              value={location}
+              onChange={setLocation}
+            />
+
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                Bio
+              </label>
+              <textarea
+                placeholder="Tell us about yourself"
+                value={bio}
+                onChange={(e) => setBio(e.target.value)}
+                className="w-full px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 text-white placeholder-gray-500 focus:outline-none focus:border-nexa-500 resize-none"
+                rows={4}
+              />
             </div>
           </div>
 
-          {/* Form */}
-          <div className="space-y-6">
-            <InputField
-              label="Display Name"
-              value={formData.displayName}
-              onChange={(value) => handleChange('displayName', value)}
-              required
-            />
-            <InputField
-              label="Bio"
-              value={formData.bio}
-              onChange={(value) => handleChange('bio', value)}
-              placeholder="Tell us about yourself"
-            />
-            <InputField
-              label="Location"
-              value={formData.location}
-              onChange={(value) => handleChange('location', value)}
-            />
-            <InputField
-              label="Website"
-              type="url"
-              value={formData.website}
-              onChange={(value) => handleChange('website', value)}
-            />
-
-            {/* Actions */}
-            <div className="flex gap-4 pt-4 border-t border-dark-700">
-              <Button fullWidth>Save Changes</Button>
-              <Button variant="secondary" fullWidth>Cancel</Button>
-            </div>
+          <div className="flex gap-3 mt-6">
+            <Button onClick={handleSave} disabled={saving}>
+              {saving ? 'Saving...' : 'Save Changes'}
+            </Button>
+            <Link to="/profile">
+              <Button variant="secondary">Cancel</Button>
+            </Link>
           </div>
         </div>
       </div>

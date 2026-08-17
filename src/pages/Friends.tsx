@@ -2,62 +2,52 @@ import React, { useState } from 'react';
 import { MainLayout } from '../layouts/MainLayout';
 import { FriendCard } from '../components/FriendCard';
 import { InputField } from '../components/InputField';
-import { Search, Users, UserPlus } from 'lucide-react';
+import { Search } from 'lucide-react';
 import { MOCK_USERS } from '../data/mockData';
 
 export const Friends: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
-  const [activeTab, setActiveTab] = useState<'friends' | 'requests' | 'suggestions'>('friends');
+  const [tab, setTab] = useState<'friends' | 'requests' | 'blocked'>('friends');
 
   const filteredFriends = MOCK_USERS.filter((user) =>
-    user.displayName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    user.username.toLowerCase().includes(searchQuery.toLowerCase())
+    user.displayName.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
     <MainLayout>
-      <div className="max-w-6xl mx-auto py-8 px-4">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-white mb-2">Friends</h1>
-          <p className="text-gray-400">Connect with people in your network</p>
-        </div>
+      <div className="max-w-4xl mx-auto p-6">
+        <h1 className="text-3xl font-bold text-white mb-6">Friends</h1>
 
         {/* Search */}
-        <div className="mb-8">
-          <div className="relative">
-            <Search size={18} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
-            <input
-              type="text"
-              placeholder="Search friends..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-3 rounded-lg bg-dark-700 border border-dark-600 text-white placeholder-gray-500 focus:outline-none focus:border-nexa-500"
-            />
-          </div>
+        <div className="mb-6">
+          <InputField
+            placeholder="Search friends..."
+            value={searchQuery}
+            onChange={setSearchQuery}
+          />
         </div>
 
         {/* Tabs */}
-        <div className="flex gap-4 mb-8 border-b border-dark-700 pb-4">
-          {['friends', 'requests', 'suggestions'].map((tab) => (
+        <div className="flex gap-4 mb-6 border-b border-dark-700">
+          {(['friends', 'requests', 'blocked'] as const).map((t) => (
             <button
-              key={tab}
-              onClick={() => setActiveTab(tab as any)}
-              className={`px-4 py-2 rounded-lg transition ${
-                activeTab === tab
-                  ? 'bg-nexa-600 text-white'
-                  : 'text-gray-400 hover:text-white'
+              key={t}
+              onClick={() => setTab(t)}
+              className={`px-4 py-2 font-medium capitalize transition ${
+                tab === t
+                  ? 'text-nexa-400 border-b-2 border-nexa-400'
+                  : 'text-gray-400 hover:text-gray-300'
               }`}
             >
-              {tab.charAt(0).toUpperCase() + tab.slice(1)}
+              {t}
             </button>
           ))}
         </div>
 
         {/* Friends Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredFriends.slice(0, 9).map((user) => (
-            <FriendCard key={user.id} userId={user.id} />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {filteredFriends.map((friend) => (
+            <FriendCard key={friend.id} userId={friend.id} />
           ))}
         </div>
       </div>

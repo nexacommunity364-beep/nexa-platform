@@ -1,82 +1,78 @@
 import React from 'react';
 import { MainLayout } from '../layouts/MainLayout';
-import { Button } from '../components/Button';
 import { useAppStore } from '../store/appStore';
-import { Calendar, MapPin, Link as LinkIcon, Mail } from 'lucide-react';
-import { MOCK_USERS } from '../data/mockData';
+import { Edit2, MapPin, Mail, Calendar } from 'lucide-react';
+import { Button } from '../components/Button';
+import { Link } from 'react-router-dom';
 
 export const Profile: React.FC = () => {
-  const user = MOCK_USERS[0];
+  const { currentUser } = useAppStore();
+
+  if (!currentUser) return null;
 
   return (
     <MainLayout>
       <div className="max-w-2xl mx-auto">
         {/* Cover Photo */}
-        <div className="h-48 bg-gradient-to-r from-nexa-600 to-nexa-700"></div>
-
-        {/* Profile Info */}
-        <div className="bg-dark-800 border-b border-dark-700 px-6 pb-6">
-          <div className="flex flex-col md:flex-row items-start gap-4 -mt-16 mb-6">
+        <div className="h-48 bg-gradient-to-r from-nexa-600 to-nexa-700 rounded-lg mb-4 relative">
+          <div className="absolute bottom-0 left-6 transform translate-y-1/2">
             <img
-              src={user.avatar}
-              alt={user.displayName}
-              className="w-32 h-32 rounded-full border-4 border-dark-800"
+              src={currentUser.avatar}
+              alt={currentUser.displayName}
+              className="w-32 h-32 rounded-full border-4 border-dark-900"
             />
-            <div className="flex-1 pt-12">
-              <div className="flex items-center justify-between mb-2">
-                <div>
-                  <h1 className="text-3xl font-bold text-white">{user.displayName}</h1>
-                  <p className="text-gray-400">@{user.username}</p>
-                </div>
-                <Button variant="secondary">Edit Profile</Button>
+          </div>
+        </div>
+
+        {/* Profile Header */}
+        <div className="bg-dark-800 rounded-lg p-6 border border-dark-700 mt-16 mb-6">
+          <div className="flex justify-between items-start mb-4">
+            <div>
+              <h1 className="text-3xl font-bold text-white mb-1">{currentUser.displayName}</h1>
+              <p className="text-gray-400">@{currentUser.username}</p>
+            </div>
+            <Link to="/profile/edit">
+              <Button variant="secondary" size="sm">
+                <Edit2 size={16} />
+                Edit Profile
+              </Button>
+            </Link>
+          </div>
+
+          <p className="text-gray-200 mb-4">{currentUser.bio}</p>
+
+          <div className="space-y-2 text-sm text-gray-400">
+            {currentUser.location && (
+              <div className="flex items-center gap-2">
+                <MapPin size={16} />
+                {currentUser.location}
               </div>
-              <p className="text-gray-300 mt-4">{user.bio}</p>
-              <div className="flex flex-wrap gap-4 mt-4 text-sm text-gray-400">
-                <div className="flex items-center gap-1">
-                  <MapPin size={16} />
-                  {user.location}
-                </div>
-                <div className="flex items-center gap-1">
-                  <Calendar size={16} />
-                  Joined 2024
-                </div>
-              </div>
+            )}
+            <div className="flex items-center gap-2">
+              <Mail size={16} />
+              {currentUser.email}
+            </div>
+            <div className="flex items-center gap-2">
+              <Calendar size={16} />
+              Joined {new Date(currentUser.createdAt).toLocaleDateString()}
             </div>
           </div>
 
           {/* Stats */}
-          <div className="grid grid-cols-3 gap-6 border-t border-dark-700 pt-6">
+          <div className="flex gap-6 mt-6 pt-6 border-t border-dark-700">
             <div>
-              <p className="text-2xl font-bold text-white">245</p>
-              <p className="text-sm text-gray-400">Posts</p>
-            </div>
-            <div>
-              <p className="text-2xl font-bold text-white">1.2K</p>
+              <p className="font-bold text-white text-lg">1,234</p>
               <p className="text-sm text-gray-400">Followers</p>
             </div>
             <div>
-              <p className="text-2xl font-bold text-white">542</p>
+              <p className="font-bold text-white text-lg">567</p>
               <p className="text-sm text-gray-400">Following</p>
             </div>
-          </div>
-        </div>
-
-        {/* Timeline Tabs */}
-        <div className="bg-dark-800 border-b border-dark-700">
-          <div className="flex gap-8 px-6">
-            <button className="py-4 border-b-2 border-nexa-600 text-white font-medium">Posts</button>
-            <button className="py-4 text-gray-400 hover:text-white transition">Media</button>
-            <button className="py-4 text-gray-400 hover:text-white transition">Likes</button>
-          </div>
-        </div>
-
-        {/* Posts */}
-        <div className="p-6 space-y-6">
-          {[1, 2, 3].map((i) => (
-            <div key={i} className="bg-dark-800 rounded-lg border border-dark-700 p-6">
-              <p className="text-gray-300">Post content here...</p>
+            <div>
+              <p className="font-bold text-white text-lg">89</p>
+              <p className="text-sm text-gray-400">Posts</p>
             </div>
-          ))}
+          </div>
         </div>
       </div>
     </MainLayout>
