@@ -1,5 +1,4 @@
 import React from 'react';
-import { X } from 'lucide-react';
 
 interface ModalProps {
   isOpen: boolean;
@@ -18,32 +17,27 @@ export const Modal: React.FC<ModalProps> = ({
 }) => {
   if (!isOpen) return null;
 
-  const sizeClass = {
+  const sizeClasses = {
     sm: 'max-w-sm',
     md: 'max-w-md',
     lg: 'max-w-lg',
-  }[size];
+  };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className={`bg-dark-800 rounded-lg shadow-2xl w-full ${sizeClass} border border-dark-700`}>
-        {/* Header */}
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+      <div className={`bg-dark-800 rounded-lg border border-dark-700 ${sizeClasses[size]} max-h-screen overflow-auto`}>
         {title && (
-          <div className="flex items-center justify-between p-6 border-b border-dark-700">
+          <div className="px-6 py-4 border-b border-dark-700 flex items-center justify-between">
             <h2 className="text-xl font-bold text-white">{title}</h2>
             <button
               onClick={onClose}
-              className="p-1 rounded-lg hover:bg-dark-700 transition text-gray-400 hover:text-white"
+              className="text-gray-400 hover:text-white transition"
             >
-              <X size={20} />
+              ✕
             </button>
           </div>
         )}
-
-        {/* Content */}
-        <div className="p-6">
-          {children}
-        </div>
+        <div className="p-6">{children}</div>
       </div>
     </div>
   );

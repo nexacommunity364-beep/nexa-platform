@@ -1,58 +1,47 @@
 import React from 'react';
-import { AlertCircle } from 'lucide-react';
 
 interface InputFieldProps {
   label?: string;
-  type?: string;
   placeholder?: string;
   value: string;
   onChange: (value: string) => void;
-  error?: string;
-  required?: boolean;
-  helperText?: string;
+  type?: string;
   disabled?: boolean;
+  error?: string;
+  icon?: React.ReactNode;
 }
 
 export const InputField: React.FC<InputFieldProps> = ({
   label,
-  type = 'text',
   placeholder,
   value,
   onChange,
+  type = 'text',
+  disabled = false,
   error,
-  required,
-  helperText,
-  disabled,
+  icon,
 }) => {
   return (
-    <div className="w-full">
-      {label && (
-        <label className="block text-sm font-medium text-gray-300 mb-2">
-          {label}
-          {required && <span className="text-red-500">*</span>}
-        </label>
-      )}
-      <input
-        type={type}
-        placeholder={placeholder}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        disabled={disabled}
-        className={`w-full px-4 py-2 rounded-lg border transition outline-none text-white placeholder-gray-500 ${
-          error
-            ? 'bg-red-500/10 border-red-500/50 focus:border-red-500'
-            : 'bg-dark-700 border-dark-600 focus:border-nexa-500'
-        } ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
-      />
-      {error && (
-        <div className="flex items-center gap-1 mt-1 text-red-400 text-xs">
-          <AlertCircle size={14} />
-          {error}
-        </div>
-      )}
-      {helperText && !error && (
-        <p className="text-xs text-gray-400 mt-1">{helperText}</p>
-      )}
+    <div>
+      {label && <label className="block text-sm font-medium text-gray-300 mb-2">{label}</label>}
+      <div className="relative">
+        {icon && <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">{icon}</div>}
+        <input
+          type={type}
+          placeholder={placeholder}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          disabled={disabled}
+          className={`w-full ${icon ? 'pl-10' : 'px-4'} py-2 rounded-lg bg-dark-700 border transition text-white placeholder-gray-500 focus:outline-none ${
+            error
+              ? 'border-red-500 focus:border-red-500'
+              : 'border-dark-600 focus:border-nexa-500'
+          } ${
+            disabled ? 'opacity-50 cursor-not-allowed' : ''
+          }`}
+        />
+      </div>
+      {error && <p className="text-red-400 text-xs mt-1">{error}</p>}
     </div>
   );
 };
