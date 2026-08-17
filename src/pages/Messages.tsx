@@ -1,31 +1,48 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import { MainLayout } from '../layouts/MainLayout';
 import { InputField } from '../components/InputField';
 import { MessageBubble } from '../components/MessageBubble';
-import { Send, Search, Plus } from 'lucide-react';
-import { MOCK_USERS, MOCK_MESSAGES } from '../data/mockData';
+import { Send, Plus } from 'lucide-react';
+import { useAppStore } from '../store/appStore';
 
 export const Messages: React.FC = () => {
-  const [selectedUserId, setSelectedUserId] = useState<string | null>(MOCK_USERS[0].id);
+  const { userId } = useParams();
+  const { currentUser, users, directMessages, addDirectMessage } = useAppStore();
+  const availableUsers = useMemo(
+    () => users.filter((user) => user.id !== currentUser?.id),
+    [users, currentUser?.id]
+  );
+  const [selectedUserId, setSelectedUserId] = useState<string | null>(userId || availableUsers[0]?.id || null);
   const [messageContent, setMessageContent] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
 
-  const filteredUsers = MOCK_USERS.filter((user) =>
+  const filteredUsers = availableUsers.filter((user) =>
     user.displayName.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const selectedUser = MOCK_USERS.find((u) => u.id === selectedUserId);
+  const selectedUser = users.find((user) => user.id === selectedUserId);
   const userMessages = selectedUserId
-    ? MOCK_MESSAGES.filter(
-        (msg) =>
-          (msg.senderId === selectedUserId || msg.recipientId === selectedUserId) &&
-          (msg.senderId === 'user1' || msg.recipientId === 'user1')
+    ? directMessages.filter(
+        (message) =>
+          currentUser &&
+          ((message.senderId === selectedUserId && message.recipientId === currentUser.id) ||
+            (message.senderId === currentUser.id && message.recipientId === selectedUserId))
       )
     : [];
 
   const handleSendMessage = () => {
-    if (messageContent.trim() && selectedUserId) {
-      console.log('Message sent:', messageContent, 'to:', selectedUserId);
+    if (messageContent.trim() && selectedUserId && currentUser) {
+      addDirectMessage({
+        id: Date.now().toString(),
+        senderId: currentUser.id,
+        recipientId: selectedUserId,
+        content: messageContent,
+        createdAt: new Date(),
+        edited: false,
+        reactions: [],
+        attachments: [],
+      });
       setMessageContent('');
     }
   };
@@ -33,7 +50,6 @@ export const Messages: React.FC = () => {
   return (
     <MainLayout>
       <div className="flex h-screen bg-dark-900">
-        {/* Conversations List */}
         <div className="w-80 bg-dark-800 border-r border-dark-700 flex flex-col">
           <div className="p-4 border-b border-dark-700 space-y-3">
             <h2 className="text-xl font-bold text-white">Messages</h2>
@@ -48,7 +64,6 @@ export const Messages: React.FC = () => {
             </button>
           </div>
 
-          {/* Conversations */}
           <div className="flex-1 overflow-y-auto space-y-1 p-2">
             {filteredUsers.map((user) => (
               <button
@@ -71,7 +86,7 @@ export const Messages: React.FC = () => {
                       {user.displayName}
                     </p>
                     <p className="text-xs text-gray-400 truncate">
-                      Last message...
+                      {user.onlineStatus === 'online' ? 'Online now' : 'Tap to open chat'}
                     </p>
                   </div>
                 </div>
@@ -80,11 +95,9 @@ export const Messages: React.FC = () => {
           </div>
         </div>
 
-        {/* Chat Area */}
         <div className="flex-1 flex flex-col">
           {selectedUser ? (
             <>
-              {/* Chat Header */}
               <div className="h-16 bg-dark-800 border-b border-dark-700 flex items-center justify-between px-6">
                 <div className="flex items-center gap-3">
                   <img
@@ -94,34 +107,42 @@ export const Messages: React.FC = () => {
                   />
                   <div>
                     <p className="font-semibold text-white">{selectedUser.displayName}</p>
-                    <p className="text-xs text-gray-400">Online</p>
+                    <p className="text-xs text-gray-400">
+                      {selectedUser.onlineStatus === 'online' ? 'Online' : selectedUser.onlineStatus}
+                    </p>
                   </div>
                 </div>
               </div>
 
-              {/* Messages */}
               <div className="flex-1 overflow-y-auto p-6 space-y-4 flex flex-col justify-end">
-                {userMessages.map((message) => (
-                  <MessageBubble
-                    key={message.id}
-                    id={message.id}
-                    authorName={message.senderName}
-                    authorAvatar="https://api.dicebear.com/7.x/avataaars/svg?seed=user"
-                    content={message.content}
-                    timestamp={message.timestamp}
-                    isOwn={message.senderId === 'user1'}
-                  />
-                ))}
+                {userMessages.map((message) => {
+                  const author = users.find((user) => user.id === message.senderId);
+                  return (
+                    <MessageBubble
+                      key={message.id}
+                      id={message.id}
+                      authorName={author?.displayName || 'Unknown'}
+                      authorAvatar={author?.avatar || ''}
+                      content={message.content}
+                      timestamp={message.createdAt}
+                      isOwn={message.senderId === currentUser?.id}
+                    />
+                  );
+                })}
+                {messageContent && (
+                  <p className="text-xs text-gray-500">
+                    Typing preview ready — send to deliver this demo message instantly.
+                  </p>
+                )}
               </div>
 
-              {/* Message Input */}
               <div className="bg-dark-800 border-t border-dark-700 p-4 space-y-3">
                 <div className="flex gap-3">
                   <input
                     type="text"
                     value={messageContent}
                     onChange={(e) => setMessageContent(e.target.value)}
-                    onKeyPress={(e) =>
+                    onKeyDown={(e) =>
                       e.key === 'Enter' && handleSendMessage()
                     }
                     placeholder="Type a message..."

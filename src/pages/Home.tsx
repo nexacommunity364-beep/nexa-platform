@@ -1,29 +1,26 @@
 import React, { useState } from 'react';
 import { MainLayout } from '../layouts/MainLayout';
-import { Button } from '../components/Button';
-import { InputField } from '../components/InputField';
-import { Heart, MessageCircle, Share2, Search } from 'lucide-react';
-import { MOCK_POSTS } from '../data/mockData';
+import { Heart, MessageCircle, Share2 } from 'lucide-react';
+import { useAppStore } from '../store/appStore';
 
 export const Home: React.FC = () => {
+  const { currentUser, posts, addPost, togglePostLike } = useAppStore();
   const [postContent, setPostContent] = useState('');
-  const [posts, setPosts] = useState(MOCK_POSTS);
 
   const handleCreatePost = () => {
-    if (postContent.trim()) {
-      const newPost = {
+    if (postContent.trim() && currentUser) {
+      addPost({
         id: Date.now().toString(),
-        authorId: 'user1',
-        authorName: 'You',
-        authorAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=you',
+        authorId: currentUser.id,
+        authorName: currentUser.displayName,
+        authorAvatar: currentUser.avatar,
         content: postContent,
         timestamp: new Date(),
         likes: 0,
         comments: 0,
         shares: 0,
         liked: false,
-      };
-      setPosts([newPost, ...posts]);
+      });
       setPostContent('');
     }
   };
@@ -31,11 +28,10 @@ export const Home: React.FC = () => {
   return (
     <MainLayout>
       <div className="max-w-2xl mx-auto p-6 space-y-6">
-        {/* Create Post */}
         <div className="bg-dark-800 rounded-lg p-6 border border-dark-700">
           <div className="flex gap-4 mb-4">
             <img
-              src="https://api.dicebear.com/7.x/avataaars/svg?seed=you"
+              src={currentUser?.avatar}
               alt="Your avatar"
               className="w-12 h-12 rounded-full flex-shrink-0"
             />
@@ -43,24 +39,26 @@ export const Home: React.FC = () => {
               <textarea
                 value={postContent}
                 onChange={(e) => setPostContent(e.target.value)}
-                placeholder="What's on your mind?"
+                placeholder="Share an update, event, or idea with your Nexa circle..."
                 className="w-full px-4 py-2 rounded-lg bg-dark-700 border border-dark-600 text-white placeholder-gray-500 focus:outline-none focus:border-nexa-500 transition resize-none"
                 rows={3}
               />
             </div>
           </div>
           <div className="flex justify-end">
-            <Button onClick={handleCreatePost} disabled={!postContent.trim()}>
-              Post
-            </Button>
+            <button
+              onClick={handleCreatePost}
+              disabled={!postContent.trim()}
+              className="px-4 py-2 rounded-lg bg-nexa-600 hover:bg-nexa-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-medium transition"
+            >
+              Post update
+            </button>
           </div>
         </div>
 
-        {/* Posts Feed */}
         <div className="space-y-6">
           {posts.map((post) => (
             <div key={post.id} className="bg-dark-800 rounded-lg p-6 border border-dark-700 hover:border-nexa-500 transition">
-              {/* Post Header */}
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-3">
                   <img
@@ -71,19 +69,20 @@ export const Home: React.FC = () => {
                   <div>
                     <p className="font-semibold text-white">{post.authorName}</p>
                     <p className="text-xs text-gray-400">
-                      {post.timestamp.toLocaleDateString()}
+                      {post.timestamp.toLocaleDateString()} · {post.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </p>
                   </div>
                 </div>
               </div>
 
-              {/* Post Content */}
               <p className="text-gray-100 mb-4 leading-relaxed">{post.content}</p>
 
-              {/* Post Actions */}
               <div className="flex items-center gap-4 pt-4 border-t border-dark-700 text-gray-400">
-                <button className="flex items-center gap-2 hover:text-red-500 transition group">
-                  <Heart size={18} className="group-hover:fill-red-500" />
+                <button
+                  onClick={() => togglePostLike(post.id)}
+                  className={`flex items-center gap-2 transition group ${post.liked ? 'text-red-500' : 'hover:text-red-500'}`}
+                >
+                  <Heart size={18} className={post.liked ? 'fill-red-500' : 'group-hover:fill-red-500'} />
                   <span className="text-sm">{post.likes}</span>
                 </button>
                 <button className="flex items-center gap-2 hover:text-blue-500 transition">

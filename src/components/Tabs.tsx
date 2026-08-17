@@ -1,44 +1,76 @@
-import React, { useState } from 'react';
+import React, { createContext, useContext } from 'react';
 
-interface TabProps {
-  tabs: Array<{
-    id: string;
-    label: string;
-    icon?: React.ReactNode;
-  }>;
-  activeTab: string;
-  onChange: (tabId: string) => void;
-  variant?: 'default' | 'pills';
+interface TabsContextValue {
+  value: string;
+  onValueChange: (value: string) => void;
 }
 
-export const Tabs: React.FC<TabProps> = ({
-  tabs,
-  activeTab,
-  onChange,
-  variant = 'default',
-}) => {
+const TabsContext = createContext<TabsContextValue | null>(null);
+
+const useTabs = () => {
+  const context = useContext(TabsContext);
+
+  if (!context) {
+    throw new Error('Tabs components must be used inside <Tabs>.');
+  }
+
+  return context;
+};
+
+interface TabsProps {
+  value: string;
+  onValueChange: (value: string) => void;
+  children: React.ReactNode;
+}
+
+export const Tabs: React.FC<TabsProps> = ({ value, onValueChange, children }) => (
+  <TabsContext.Provider value={{ value, onValueChange }}>
+    <div>{children}</div>
+  </TabsContext.Provider>
+);
+
+interface TabsListProps {
+  children: React.ReactNode;
+}
+
+export const TabsList: React.FC<TabsListProps> = ({ children }) => (
+  <div className="flex gap-2 border-b border-dark-700 mb-6 overflow-x-auto pb-1">{children}</div>
+);
+
+interface TabsTriggerProps {
+  value: string;
+  children: React.ReactNode;
+}
+
+export const TabsTrigger: React.FC<TabsTriggerProps> = ({ value, children }) => {
+  const { value: currentValue, onValueChange } = useTabs();
+
   return (
-    <div className={`flex gap-2 ${
-      variant === 'default' ? 'border-b border-dark-700' : ''
-    }`}>
-      {tabs.map((tab) => (
-        <button
-          key={tab.id}
-          onClick={() => onChange(tab.id)}
-          className={`flex items-center gap-2 px-4 py-3 font-medium transition ${
-            variant === 'default'
-              ? activeTab === tab.id
-                ? 'text-nexa-400 border-b-2 border-nexa-500'
-                : 'text-gray-400 border-b-2 border-transparent hover:text-gray-300'
-              : activeTab === tab.id
-              ? 'bg-nexa-600 text-white rounded-lg'
-              : 'bg-dark-700 text-gray-300 hover:bg-dark-600 rounded-lg'
-          }`}
-        >
-          {tab.icon}
-          {tab.label}
-        </button>
-      ))}
-    </div>
+    <button
+      onClick={() => onValueChange(value)}
+      className={`px-4 py-3 font-medium transition whitespace-nowrap border-b-2 ${
+        currentValue === value
+          ? 'text-nexa-400 border-nexa-500'
+          : 'text-gray-400 border-transparent hover:text-gray-300'
+      }`}
+    >
+      {children}
+    </button>
   );
+};
+
+interface TabsContentProps {
+  value: string;
+  children: React.ReactNode;
+  className?: string;
+}
+
+export const TabsContent: React.FC<TabsContentProps> = ({ value, children, className = '' }) => {
+  const { value: currentValue } = useTabs();
+
+  if (currentValue !== value) {
+    return null;
+  }
+
+  return <div className={className}>{children}</div>;
 };

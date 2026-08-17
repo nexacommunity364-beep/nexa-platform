@@ -9,6 +9,8 @@ interface InputFieldProps {
   disabled?: boolean;
   error?: string;
   icon?: React.ReactNode;
+  helperText?: string;
+  required?: boolean;
 }
 
 export const InputField: React.FC<InputFieldProps> = ({
@@ -20,10 +22,17 @@ export const InputField: React.FC<InputFieldProps> = ({
   disabled = false,
   error,
   icon,
+  helperText,
+  required = false,
 }) => {
   return (
     <div>
-      {label && <label className="block text-sm font-medium text-gray-300 mb-2">{label}</label>}
+      {label && (
+        <label className="block text-sm font-medium text-gray-300 mb-2">
+          {label}
+          {required && <span className="text-red-400 ml-1">*</span>}
+        </label>
+      )}
       <div className="relative">
         {icon && <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">{icon}</div>}
         <input
@@ -42,6 +51,7 @@ export const InputField: React.FC<InputFieldProps> = ({
         />
       </div>
       {error && <p className="text-red-400 text-xs mt-1">{error}</p>}
+      {!error && helperText && <p className="text-gray-500 text-xs mt-1">{helperText}</p>}
     </div>
   );
 };

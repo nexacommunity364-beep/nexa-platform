@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAppStore } from '../store/appStore';
 import { Search, Bell, Settings, Menu, X } from 'lucide-react';
 
 export const Header: React.FC = () => {
   const { currentUser } = useAppStore();
+  const navigate = useNavigate();
   const [showMobileMenu, setShowMobileMenu] = useState(false);
 
   return (
@@ -23,19 +25,28 @@ export const Header: React.FC = () => {
       {/* Right - Actions */}
       <div className="flex items-center gap-4 ml-auto">
         {/* Notifications */}
-        <button className="relative p-2 rounded-lg hover:bg-dark-700 transition text-gray-300 hover:text-white">
+        <button
+          onClick={() => navigate('/notifications')}
+          className="relative p-2 rounded-lg hover:bg-dark-700 transition text-gray-300 hover:text-white"
+        >
           <Bell size={20} />
           <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
         </button>
 
         {/* Settings */}
-        <button className="p-2 rounded-lg hover:bg-dark-700 transition text-gray-300 hover:text-white hidden md:block">
+        <button
+          onClick={() => navigate('/settings')}
+          className="p-2 rounded-lg hover:bg-dark-700 transition text-gray-300 hover:text-white hidden md:block"
+        >
           <Settings size={20} />
         </button>
 
         {/* User Avatar */}
         {currentUser && (
-          <button className="flex items-center gap-2 p-1 rounded-lg hover:bg-dark-700 transition">
+          <Link
+            to={`/profile/${currentUser.username}`}
+            className="flex items-center gap-2 p-1 rounded-lg hover:bg-dark-700 transition"
+          >
             <img
               src={currentUser.avatar}
               alt={currentUser.displayName}
@@ -44,7 +55,7 @@ export const Header: React.FC = () => {
             <span className="text-sm font-medium text-white hidden md:block truncate max-w-[120px]">
               {currentUser.displayName}
             </span>
-          </button>
+          </Link>
         )}
 
         {/* Mobile Menu */}

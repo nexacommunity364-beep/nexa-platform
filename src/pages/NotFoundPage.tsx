@@ -15,7 +15,7 @@ export const NotFoundPage: React.FC = () => {
           <h2 className="text-3xl font-bold text-white mb-2">Page Not Found</h2>
           <p className="text-gray-400 mb-8">The page you're looking for doesn't exist or has been moved.</p>
           <div className="flex gap-4 justify-center">
-            <Button onClick={() => navigate('/')}>
+            <Button onClick={() => navigate('/home')}>
               <Home size={18} />
               Go Home
             </Button>
