@@ -1,5 +1,5 @@
 import React from 'react';
-import { UserPlus, MessageSquare, MoreVertical } from 'lucide-react';
+import { User, MessageSquare, MoreVertical } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { MOCK_USERS } from '../data/mockData';
 
@@ -56,7 +56,7 @@ export const FriendCard: React.FC<FriendCardProps> = ({ userId }) => {
           to={`/profile/${user.username}`}
           className="flex-1 flex items-center justify-center gap-1 px-2 py-2 rounded-lg bg-dark-700 hover:bg-dark-600 text-gray-300 transition text-xs font-medium"
         >
-          <UserPlus size={14} />
+          <User size={14} />
           Profile
         </Link>
       </div>

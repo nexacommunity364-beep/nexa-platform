@@ -19,21 +19,22 @@ interface RoomMessage {
 export const RoomChat: React.FC = () => {
   const { roomId } = useParams();
   const { currentUser } = useAppStore();
-  const initialMessages = MOCK_MESSAGES
-    .filter((message) => message.roomId === roomId)
-    .map((message) => {
-      const author = MOCK_USERS.find((user) => user.id === message.authorId);
-      return {
-        id: message.id,
-        authorId: message.authorId,
-        authorName: author?.displayName || 'Unknown',
-        authorAvatar: author?.avatar || '',
-        content: message.content,
-        timestamp: message.createdAt,
-        edited: message.edited,
-      };
-    });
-  const [messages, setMessages] = useState<RoomMessage[]>(initialMessages);
+  const [messages, setMessages] = useState<RoomMessage[]>(() =>
+    MOCK_MESSAGES
+      .filter((message) => message.roomId === roomId)
+      .map((message) => {
+        const author = MOCK_USERS.find((user) => user.id === message.authorId);
+        return {
+          id: message.id,
+          authorId: message.authorId,
+          authorName: author?.displayName || 'Unknown',
+          authorAvatar: author?.avatar || '',
+          content: message.content,
+          timestamp: message.createdAt,
+          edited: message.edited,
+        };
+      })
+  );
   const [newMessage, setNewMessage] = useState('');
   const room = MOCK_ROOMS.find((item) => item.id === roomId);
 

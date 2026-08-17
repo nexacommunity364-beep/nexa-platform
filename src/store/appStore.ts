@@ -59,6 +59,14 @@ interface AppStore {
   setSidebarOpen: (open: boolean) => void;
 }
 
+const reviveUser = (user: User | null) =>
+  user
+    ? {
+        ...user,
+        joinedDate: new Date(user.joinedDate),
+      }
+    : null;
+
 export const useAppStore = create<AppStore>()(
   persist(
     (set) => ({
@@ -96,7 +104,6 @@ export const useAppStore = create<AppStore>()(
           isMember,
           members,
           memberCount: community.memberCount + (isMember ? 1 : -1),
-          onlineCount: Math.max(0, community.onlineCount + (isMember ? 1 : -1)),
         };
       }),
     })),
@@ -173,13 +180,16 @@ export const useAppStore = create<AppStore>()(
       name: 'nexa-platform-store',
       partialize: (state) => ({
         currentUser: state.currentUser,
-        communities: state.communities,
-        directMessages: state.directMessages,
-        posts: state.posts,
-        notifications: state.notifications,
-        supportTickets: state.supportTickets,
         theme: state.theme,
       }),
+      merge: (persistedState, currentState) => {
+        const typedState = persistedState as Partial<AppStore>;
+        return {
+          ...currentState,
+          ...typedState,
+          currentUser: reviveUser(typedState.currentUser ?? currentState.currentUser),
+        };
+      },
     }
   )
 );

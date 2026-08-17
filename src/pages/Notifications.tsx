@@ -1,6 +1,6 @@
 import React from 'react';
 import { MainLayout } from '../layouts/MainLayout';
-import { Bell, Heart, MessageCircle, UserPlus, Share2 } from 'lucide-react';
+import { AlertTriangle, Bell, Calendar, MessageCircle, UserPlus, Share2 } from 'lucide-react';
 import { Button } from '../components/Button';
 import { useAppStore } from '../store/appStore';
 
@@ -14,10 +14,11 @@ export const Notifications: React.FC = () => {
         return <UserPlus size={20} className="text-green-500" />;
       case 'mention':
       case 'reply':
-        return <Heart size={20} className="text-red-500" />;
-      case 'event':
-      case 'warning':
         return <MessageCircle size={20} className="text-blue-500" />;
+      case 'event':
+        return <Calendar size={20} className="text-red-500" />;
+      case 'warning':
+        return <AlertTriangle size={20} className="text-yellow-500" />;
       case 'support':
       case 'announcement':
         return <Share2 size={20} className="text-purple-500" />;

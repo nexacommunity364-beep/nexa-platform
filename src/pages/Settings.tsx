@@ -59,10 +59,9 @@ export const Settings: React.FC = () => {
   };
 
   const handleDelete = () => {
-    window.localStorage.removeItem('nexa-platform-store');
     window.localStorage.removeItem(SETTINGS_KEY);
-    Toast.error('Demo account removed from local state.');
-    setCurrentUser(null);
+    useAppStore.persist.clearStorage();
+    window.location.href = '/login';
   };
 
   return (
