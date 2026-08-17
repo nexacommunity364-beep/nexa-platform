@@ -1,21 +1,22 @@
 import React, { useState } from 'react';
 import { MainLayout } from '../layouts/MainLayout';
 import { Button } from '../components/Button';
-import { InputField } from '../components/InputField';
-import { Heart, MessageCircle, Share2, Search } from 'lucide-react';
-import { MOCK_POSTS } from '../data/mockData';
+import { Heart, MessageCircle, Share2 } from 'lucide-react';
+import { MOCK_POSTS, Post } from '../data/mockData';
+import { useAppStore } from '../store/appStore';
 
 export const Home: React.FC = () => {
+  const { currentUser } = useAppStore();
   const [postContent, setPostContent] = useState('');
-  const [posts, setPosts] = useState(MOCK_POSTS);
+  const [posts, setPosts] = useState<Post[]>(MOCK_POSTS);
 
   const handleCreatePost = () => {
-    if (postContent.trim()) {
-      const newPost = {
+    if (postContent.trim() && currentUser) {
+      const newPost: Post = {
         id: Date.now().toString(),
-        authorId: 'user1',
-        authorName: 'You',
-        authorAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=you',
+        authorId: currentUser.id,
+        authorName: currentUser.displayName,
+        authorAvatar: currentUser.avatar,
         content: postContent,
         timestamp: new Date(),
         likes: 0,
@@ -34,11 +35,13 @@ export const Home: React.FC = () => {
         {/* Create Post */}
         <div className="bg-dark-800 rounded-lg p-6 border border-dark-700">
           <div className="flex gap-4 mb-4">
-            <img
-              src="https://api.dicebear.com/7.x/avataaars/svg?seed=you"
-              alt="Your avatar"
-              className="w-12 h-12 rounded-full flex-shrink-0"
-            />
+            {currentUser && (
+              <img
+                src={currentUser.avatar}
+                alt={currentUser.displayName}
+                className="w-12 h-12 rounded-full flex-shrink-0"
+              />
+            )}
             <div className="flex-1">
               <textarea
                 value={postContent}
@@ -61,19 +64,17 @@ export const Home: React.FC = () => {
           {posts.map((post) => (
             <div key={post.id} className="bg-dark-800 rounded-lg p-6 border border-dark-700 hover:border-nexa-500 transition">
               {/* Post Header */}
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-3">
-                  <img
-                    src={post.authorAvatar}
-                    alt={post.authorName}
-                    className="w-10 h-10 rounded-full"
-                  />
-                  <div>
-                    <p className="font-semibold text-white">{post.authorName}</p>
-                    <p className="text-xs text-gray-400">
-                      {post.timestamp.toLocaleDateString()}
-                    </p>
-                  </div>
+              <div className="flex items-center gap-3 mb-4">
+                <img
+                  src={post.authorAvatar}
+                  alt={post.authorName}
+                  className="w-10 h-10 rounded-full"
+                />
+                <div>
+                  <p className="font-semibold text-white">{post.authorName}</p>
+                  <p className="text-xs text-gray-400">
+                    {post.timestamp.toLocaleDateString()}
+                  </p>
                 </div>
               </div>
 
@@ -83,7 +84,7 @@ export const Home: React.FC = () => {
               {/* Post Actions */}
               <div className="flex items-center gap-4 pt-4 border-t border-dark-700 text-gray-400">
                 <button className="flex items-center gap-2 hover:text-red-500 transition group">
-                  <Heart size={18} className="group-hover:fill-red-500" />
+                  <Heart size={18} className={post.liked ? 'fill-red-500 text-red-500' : 'group-hover:fill-red-500'} />
                   <span className="text-sm">{post.likes}</span>
                 </button>
                 <button className="flex items-center gap-2 hover:text-blue-500 transition">

@@ -2,20 +2,33 @@ import React, { useState } from 'react';
 import { MainLayout } from '../layouts/MainLayout';
 import { InputField } from '../components/InputField';
 import { CommunityCard } from '../components/CommunityCard';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/Tabs';
+import { Tabs } from '../components/Tabs';
 import { MOCK_COMMUNITIES } from '../data/mockData';
+import { useAppStore } from '../store/appStore';
+
+const TABS = [
+  { id: 'joined', label: 'Joined' },
+  { id: 'discover', label: 'Discover' },
+];
 
 export const Communities: React.FC = () => {
+  const { currentUser } = useAppStore();
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState('joined');
 
-  const filteredCommunities = MOCK_COMMUNITIES.filter((community) =>
-    community.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    community.description.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredCommunities = MOCK_COMMUNITIES.filter(
+    (community) =>
+      community.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      community.description.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const joinedCommunities = filteredCommunities.filter((c) => c.isMember);
-  const exploredCommunities = filteredCommunities.filter((c) => !c.isMember);
+  // Communities owned by the current user count as "joined"
+  const joinedCommunities = filteredCommunities.filter(
+    (c) => c.ownerId === currentUser?.id
+  );
+  const discoverCommunities = filteredCommunities.filter(
+    (c) => c.ownerId !== currentUser?.id
+  );
 
   return (
     <MainLayout>
@@ -34,58 +47,56 @@ export const Communities: React.FC = () => {
         />
 
         {/* Tabs */}
-        <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList>
-            <TabsTrigger value="joined">Joined ({joinedCommunities.length})</TabsTrigger>
-            <TabsTrigger value="discover">Discover ({exploredCommunities.length})</TabsTrigger>
-          </TabsList>
+        <Tabs tabs={TABS} activeTab={activeTab} onChange={setActiveTab} />
 
-          <TabsContent value="joined" className="space-y-4">
-            {joinedCommunities.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {joinedCommunities.map((community) => (
-                  <CommunityCard
-                    key={community.id}
-                    id={community.id}
-                    icon={community.icon}
-                    name={community.name}
-                    description={community.description}
-                    members={community.members}
-                    category={community.category}
-                    isPublic={community.isPublic}
-                  />
-                ))}
-              </div>
-            ) : (
-              <div className="bg-dark-800 rounded-lg p-6 border border-dark-700 text-center text-gray-400">
-                <p>You haven't joined any communities yet</p>
-              </div>
-            )}
-          </TabsContent>
+        {/* Content */}
+        {activeTab === 'joined' && (
+          joinedCommunities.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {joinedCommunities.map((community) => (
+                <CommunityCard
+                  key={community.id}
+                  id={community.id}
+                  icon={community.icon}
+                  name={community.name}
+                  description={community.description}
+                  members={community.memberCount}
+                  banner={community.banner}
+                  category={community.category}
+                  isPublic={community.isPublic}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="bg-dark-800 rounded-lg p-6 border border-dark-700 text-center text-gray-400">
+              <p>You haven't joined any communities yet</p>
+            </div>
+          )
+        )}
 
-          <TabsContent value="discover" className="space-y-4">
-            {exploredCommunities.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {exploredCommunities.map((community) => (
-                  <CommunityCard
-                    key={community.id}
-                    id={community.id}
-                    icon={community.icon}
-                    name={community.name}
-                    description={community.description}
-                    members={community.members}
-                    category={community.category}
-                    isPublic={community.isPublic}
-                  />
-                ))}
-              </div>
-            ) : (
-              <div className="bg-dark-800 rounded-lg p-6 border border-dark-700 text-center text-gray-400">
-                <p>No new communities to explore</p>
-              </div>
-            )}
-          </TabsContent>
-        </Tabs>
+        {activeTab === 'discover' && (
+          discoverCommunities.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {discoverCommunities.map((community) => (
+                <CommunityCard
+                  key={community.id}
+                  id={community.id}
+                  icon={community.icon}
+                  name={community.name}
+                  description={community.description}
+                  members={community.memberCount}
+                  banner={community.banner}
+                  category={community.category}
+                  isPublic={community.isPublic}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="bg-dark-800 rounded-lg p-6 border border-dark-700 text-center text-gray-400">
+              <p>No new communities to explore</p>
+            </div>
+          )
+        )}
       </div>
     </MainLayout>
   );

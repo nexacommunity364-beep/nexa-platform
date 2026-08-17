@@ -12,17 +12,20 @@ import {
   Shield,
   Zap,
   LogOut,
-  Plus,
 } from 'lucide-react';
 
 export const Sidebar: React.FC = () => {
   const location = useLocation();
-  const { currentUser } = useAppStore();
+  const { currentUser, setCurrentUser } = useAppStore();
 
   const isActive = (path: string) => location.pathname === path;
 
+  const handleLogout = () => {
+    setCurrentUser(null);
+  };
+
   const mainLinks = [
-    { path: '/home', label: 'Home', icon: Home },
+    { path: '/', label: 'Home', icon: Home },
     { path: '/friends', label: 'Friends', icon: Users },
     { path: '/messages', label: 'Messages', icon: MessageSquare },
     { path: '/communities', label: 'Communities', icon: Zap },
@@ -41,7 +44,7 @@ export const Sidebar: React.FC = () => {
     <aside className="w-72 bg-dark-800 border-r border-dark-700 flex flex-col overflow-hidden">
       {/* Logo */}
       <div className="p-6 border-b border-dark-700">
-        <Link to="/home" className="flex items-center gap-2">
+        <Link to="/" className="flex items-center gap-2">
           <div className="w-10 h-10 bg-gradient-to-br from-nexa-500 to-nexa-700 rounded-lg flex items-center justify-center font-bold text-xl text-white shadow-lg shadow-nexa-500/50">
             N
           </div>
@@ -112,7 +115,7 @@ export const Sidebar: React.FC = () => {
             </>
           )}
         </Link>
-        <button className="w-full flex items-center gap-2 px-4 py-2 rounded-lg bg-red-500/20 text-red-400 hover:bg-red-500/30 transition font-medium text-sm">
+        <button onClick={handleLogout} className="w-full flex items-center gap-2 px-4 py-2 rounded-lg bg-red-500/20 text-red-400 hover:bg-red-500/30 transition font-medium text-sm">
           <LogOut size={16} />
           Log Out
         </button>

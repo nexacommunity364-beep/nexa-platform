@@ -7,23 +7,26 @@ import { ArrowLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export const EditProfile: React.FC = () => {
-  const { currentUser } = useAppStore();
-  const [displayName, setDisplayName] = useState(currentUser?.displayName || '');
-  const [bio, setBio] = useState(currentUser?.bio || '');
-  const [location, setLocation] = useState(currentUser?.location || '');
+  const { currentUser, setCurrentUser } = useAppStore();
+  const [displayName, setDisplayName] = useState(currentUser?.displayName ?? '');
+  const [bio, setBio] = useState(currentUser?.bio ?? '');
   const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
 
   const handleSave = async () => {
+    if (!currentUser) return;
     setSaving(true);
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    await new Promise((resolve) => setTimeout(resolve, 800));
+    setCurrentUser({ ...currentUser, displayName, bio });
     setSaving(false);
+    setSaved(true);
+    setTimeout(() => setSaved(false), 2000);
   };
 
   return (
     <MainLayout>
       <div className="max-w-2xl mx-auto p-6">
-        <Link to="/profile" className="flex items-center gap-2 text-nexa-400 hover:text-nexa-300 mb-6">
+        <Link to={`/profile/${currentUser?.username}`} className="flex items-center gap-2 text-nexa-400 hover:text-nexa-300 mb-6">
           <ArrowLeft size={20} />
           Back to Profile
         </Link>
@@ -39,17 +42,8 @@ export const EditProfile: React.FC = () => {
               onChange={setDisplayName}
             />
 
-            <InputField
-              label="Location"
-              placeholder="City, Country"
-              value={location}
-              onChange={setLocation}
-            />
-
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
-                Bio
-              </label>
+              <label className="block text-sm font-medium text-gray-300 mb-2">Bio</label>
               <textarea
                 placeholder="Tell us about yourself"
                 value={bio}
@@ -62,9 +56,9 @@ export const EditProfile: React.FC = () => {
 
           <div className="flex gap-3 mt-6">
             <Button onClick={handleSave} disabled={saving}>
-              {saving ? 'Saving...' : 'Save Changes'}
+              {saving ? 'Saving...' : saved ? 'Saved!' : 'Save Changes'}
             </Button>
-            <Link to="/profile">
+            <Link to={`/profile/${currentUser?.username}`}>
               <Button variant="secondary">Cancel</Button>
             </Link>
           </div>

@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { InputField } from '../components/InputField';
-import { Button } from '../components/Button';
-import { Mail, Lock, User, Calendar } from 'lucide-react';
+import { InputField } from '../../components/InputField';
+import { Button } from '../../components/Button';
+import { useAppStore } from '../../store/appStore';
+import { MOCK_CURRENT_USER } from '../../data/mockData';
 
 export const SignUp: React.FC = () => {
   const navigate = useNavigate();
+  const { setCurrentUser } = useAppStore();
   const [formData, setFormData] = useState({
     displayName: '',
     username: '',
@@ -32,7 +34,8 @@ export const SignUp: React.FC = () => {
 
   const handleSignUp = () => {
     if (validateForm()) {
-      navigate('/home');
+      setCurrentUser(MOCK_CURRENT_USER);
+      navigate('/');
     }
   };
 
@@ -58,7 +61,7 @@ export const SignUp: React.FC = () => {
               label="Display Name"
               placeholder="Your name"
               value={formData.displayName}
-              onChange={(value) => setFormData({ ...formData, displayName: value })}
+              onChange={(value: string) => setFormData({ ...formData, displayName: value })}
               error={errors.displayName}
               required
             />
@@ -67,7 +70,7 @@ export const SignUp: React.FC = () => {
               label="Username"
               placeholder="@username"
               value={formData.username}
-              onChange={(value) => setFormData({ ...formData, username: value })}
+              onChange={(value: string) => setFormData({ ...formData, username: value })}
               error={errors.username}
               required
               helperText="This will be unique to your account"
@@ -78,7 +81,7 @@ export const SignUp: React.FC = () => {
               type="email"
               placeholder="your@email.com"
               value={formData.email}
-              onChange={(value) => setFormData({ ...formData, email: value })}
+              onChange={(value: string) => setFormData({ ...formData, email: value })}
               error={errors.email}
               required
             />
@@ -88,7 +91,7 @@ export const SignUp: React.FC = () => {
               type="password"
               placeholder="••••••••"
               value={formData.password}
-              onChange={(value) => setFormData({ ...formData, password: value })}
+              onChange={(value: string) => setFormData({ ...formData, password: value })}
               error={errors.password}
               required
               helperText="Minimum 8 characters"
@@ -99,7 +102,7 @@ export const SignUp: React.FC = () => {
               type="password"
               placeholder="••••••••"
               value={formData.confirmPassword}
-              onChange={(value) => setFormData({ ...formData, confirmPassword: value })}
+              onChange={(value: string) => setFormData({ ...formData, confirmPassword: value })}
               error={errors.confirmPassword}
               required
             />
@@ -108,38 +111,14 @@ export const SignUp: React.FC = () => {
               label="Date of Birth"
               type="date"
               value={formData.dateOfBirth}
-              onChange={(value) => setFormData({ ...formData, dateOfBirth: value })}
+              onChange={(value: string) => setFormData({ ...formData, dateOfBirth: value })}
               error={errors.dateOfBirth}
               required
             />
           </div>
 
-          <Button
-            fullWidth
-            className="mt-6"
-            onClick={handleSignUp}
-          >
+          <Button fullWidth className="mt-6" onClick={handleSignUp}>
             Create Account
-          </Button>
-
-          <div className="relative my-6">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-dark-700"></div>
-            </div>
-            <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-dark-800 text-gray-500">Or continue with</span>
-            </div>
-          </div>
-
-          <Button
-            variant="secondary"
-            fullWidth
-            className="mb-4"
-          >
-            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M15.545 6.558a9.42 9.42 0 01.139 1.626c0 2.889-2.126 5.413-4.953 5.413-2.829 0-5.155-2.524-5.155-5.413 0-.55.062-1.08.181-1.594m0-4.894a9.42 9.42 0 00-.139-1.626c0-2.889 2.126-5.413 4.953-5.413 2.829 0 5.155 2.524 5.155 5.413 0 .55-.062 1.08-.181 1.594" />
-            </svg>
-            Google
           </Button>
         </div>
 

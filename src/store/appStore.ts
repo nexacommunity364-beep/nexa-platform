@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { User, Community, Friend, DirectMessage, GroupChat, Notification } from '../types';
+import { User, Community, Friend, DirectMessage, Notification } from '../types';
 import { MOCK_CURRENT_USER, MOCK_USERS, MOCK_FRIENDS, MOCK_COMMUNITIES } from '../data/mockData';
 
 interface AppStore {

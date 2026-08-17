@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { MainLayout } from '../layouts/MainLayout';
 import { Button } from '../components/Button';
 import { InputField } from '../components/InputField';
-import { Lock, Bell, Eye, Shield, Moon, Zap } from 'lucide-react';
+import { Lock, Bell, Shield, Moon } from 'lucide-react';
 import { Toggle } from '../components/Toggle';
 
 export const Settings: React.FC = () => {

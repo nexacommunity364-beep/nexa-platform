@@ -1,4 +1,3 @@
-import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useAppStore } from './store/appStore';
 
@@ -15,7 +14,7 @@ import { Settings } from './pages/Settings';
 import { Profile } from './pages/Profile';
 import { EditProfile } from './pages/EditProfile';
 import { Friends } from './pages/Friends';
-import { DirectMessages } from './pages/DirectMessages';
+import { Messages } from './pages/Messages';
 import { Communities } from './pages/Communities';
 import { RoomChat } from './pages/RoomChat';
 import { Reports } from './pages/Reports';
@@ -25,7 +24,8 @@ import { SupportCenter } from './pages/SupportCenter';
 import { NotFoundPage } from './pages/NotFoundPage';
 
 function App() {
-  const { isAuthenticated } = useAppStore();
+  const { currentUser } = useAppStore();
+  const isAuthenticated = currentUser !== null;
 
   return (
     <BrowserRouter>
@@ -45,8 +45,8 @@ function App() {
             <Route path="/profile/:username" element={<Profile />} />
             <Route path="/profile/edit" element={<EditProfile />} />
             <Route path="/friends" element={<Friends />} />
-            <Route path="/messages" element={<DirectMessages />} />
-            <Route path="/messages/:userId" element={<DirectMessages />} />
+            <Route path="/messages" element={<Messages />} />
+            <Route path="/messages/:userId" element={<Messages />} />
             <Route path="/communities" element={<Communities />} />
             <Route path="/communities/:communityId" element={<Communities />} />
             <Route path="/communities/:communityId/room/:roomId" element={<RoomChat />} />

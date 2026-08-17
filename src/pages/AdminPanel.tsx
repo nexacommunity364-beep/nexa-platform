@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { MainLayout } from '../layouts/MainLayout';
 import { Users, TrendingUp, AlertCircle, BarChart3 } from 'lucide-react';
-import { Button } from '../components/Button';
 
 export const AdminPanel: React.FC = () => {
   const [tab, setTab] = useState<'overview' | 'users' | 'moderation' | 'analytics'>('overview');

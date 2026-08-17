@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { MainLayout } from '../layouts/MainLayout';
 import { InputField } from '../components/InputField';
-import { Button } from '../components/Button';
-import { HelpCircle, MessageSquare, BookOpen, AlertCircle } from 'lucide-react';
+import { HelpCircle, MessageSquare, BookOpen } from 'lucide-react';
 
 interface FAQItem {
   question: string;

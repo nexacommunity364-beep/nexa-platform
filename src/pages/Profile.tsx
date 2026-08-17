@@ -1,14 +1,13 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { MainLayout } from '../layouts/MainLayout';
 import { Button } from '../components/Button';
-import { Edit, MapPin, Link as LinkIcon, Calendar, Mail, UserPlus } from 'lucide-react';
+import { Edit, MapPin, Link as LinkIcon, Calendar } from 'lucide-react';
 import { useAppStore } from '../store/appStore';
 
 export const Profile: React.FC = () => {
   const { currentUser } = useAppStore();
-  const [followers, setFollowers] = useState(1250);
-  const [following, setFollowing] = useState(342);
-  const [isFollowed, setIsFollowed] = useState(false);
+  const followers = 1250;
+  const following = 342;
 
   if (!currentUser) {
     return <MainLayout><div>Loading...</div></MainLayout>;

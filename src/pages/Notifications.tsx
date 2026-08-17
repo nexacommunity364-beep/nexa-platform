@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { MainLayout } from '../layouts/MainLayout';
 import { Bell, Heart, MessageCircle, UserPlus, Share2 } from 'lucide-react';
 import { Button } from '../components/Button';
@@ -14,7 +14,7 @@ interface Notification {
 }
 
 export const Notifications: React.FC = () => {
-  const [notifications, setNotifications] = useState<Notification[]>([
+  const notifications: Notification[] = [
     {
       id: '1',
       type: 'like',
@@ -33,7 +33,7 @@ export const Notifications: React.FC = () => {
       timestamp: new Date(Date.now() - 7200000),
       read: false,
     },
-  ]);
+  ];
 
   const getIcon = (type: string) => {
     switch (type) {

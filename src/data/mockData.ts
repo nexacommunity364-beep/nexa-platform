@@ -1,5 +1,5 @@
 // Mock data for Nexa platform
-import { User, Community, Room, Message, DirectMessage, Notification, CommunityEvent, CommunityRole, Badge, Friend } from '../types';
+import { User, Community, Room, Message, DirectMessage, Notification, CommunityEvent, CommunityRole, Friend } from '../types';
 
 const now = new Date();
 
@@ -379,5 +379,57 @@ export const MOCK_ROLES: CommunityRole[] = [
     permissions: ['send_messages', 'read_messages'],
     isPermanent: false,
     members: ['user-3'],
+  },
+];
+
+export interface Post {
+  id: string;
+  authorId: string;
+  authorName: string;
+  authorAvatar: string;
+  content: string;
+  timestamp: Date;
+  likes: number;
+  comments: number;
+  shares: number;
+  liked: boolean;
+}
+
+export const MOCK_POSTS: Post[] = [
+  {
+    id: 'post-1',
+    authorId: 'user-2',
+    authorName: 'Alex',
+    authorAvatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=400&fit=crop',
+    content: 'Just hit level 25 in the Nexa Gaming community! 🎮 Who\'s up for a game night tonight?',
+    timestamp: new Date(now.getTime() - 10 * 60000),
+    likes: 42,
+    comments: 8,
+    shares: 3,
+    liked: false,
+  },
+  {
+    id: 'post-2',
+    authorId: 'user-3',
+    authorName: 'Sam',
+    authorAvatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop',
+    content: 'Check out my new Minecraft build! Spent 3 days on this castle ⛏️🏰',
+    timestamp: new Date(now.getTime() - 30 * 60000),
+    likes: 128,
+    comments: 24,
+    shares: 15,
+    liked: true,
+  },
+  {
+    id: 'post-3',
+    authorId: 'user-4',
+    authorName: 'Jordan',
+    authorAvatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop',
+    content: 'Nexa is the future of community platforms. So glad to be part of this from the beginning! 🚀',
+    timestamp: new Date(now.getTime() - 60 * 60000),
+    likes: 89,
+    comments: 12,
+    shares: 7,
+    liked: false,
   },
 ];

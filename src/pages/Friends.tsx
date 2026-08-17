@@ -2,16 +2,23 @@ import React, { useState } from 'react';
 import { MainLayout } from '../layouts/MainLayout';
 import { InputField } from '../components/InputField';
 import { FriendCard } from '../components/FriendCard';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/Tabs';
+import { Tabs } from '../components/Tabs';
 import { MOCK_USERS } from '../data/mockData';
+
+const TABS = [
+  { id: 'friends', label: 'Friends' },
+  { id: 'requests', label: 'Requests (3)' },
+  { id: 'blocked', label: 'Blocked (2)' },
+];
 
 export const Friends: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState('friends');
 
-  const filteredUsers = MOCK_USERS.filter((user) =>
-    user.displayName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    user.username.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredUsers = MOCK_USERS.filter(
+    (user) =>
+      user.displayName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      user.username.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
@@ -31,33 +38,28 @@ export const Friends: React.FC = () => {
         />
 
         {/* Tabs */}
-        <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList>
-            <TabsTrigger value="friends">Friends ({MOCK_USERS.length})</TabsTrigger>
-            <TabsTrigger value="requests">Requests (3)</TabsTrigger>
-            <TabsTrigger value="blocked">Blocked (2)</TabsTrigger>
-          </TabsList>
+        <Tabs tabs={TABS} activeTab={activeTab} onChange={setActiveTab} />
 
-          <TabsContent value="friends" className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {filteredUsers.map((user) => (
-                <FriendCard key={user.id} userId={user.id} />
-              ))}
-            </div>
-          </TabsContent>
+        {/* Content */}
+        {activeTab === 'friends' && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {filteredUsers.map((user) => (
+              <FriendCard key={user.id} userId={user.id} />
+            ))}
+          </div>
+        )}
 
-          <TabsContent value="requests" className="space-y-4">
-            <div className="bg-dark-800 rounded-lg p-6 border border-dark-700 text-center text-gray-400">
-              <p>No pending friend requests</p>
-            </div>
-          </TabsContent>
+        {activeTab === 'requests' && (
+          <div className="bg-dark-800 rounded-lg p-6 border border-dark-700 text-center text-gray-400">
+            <p>No pending friend requests</p>
+          </div>
+        )}
 
-          <TabsContent value="blocked" className="space-y-4">
-            <div className="bg-dark-800 rounded-lg p-6 border border-dark-700 text-center text-gray-400">
-              <p>You haven't blocked anyone</p>
-            </div>
-          </TabsContent>
-        </Tabs>
+        {activeTab === 'blocked' && (
+          <div className="bg-dark-800 rounded-lg p-6 border border-dark-700 text-center text-gray-400">
+            <p>You haven't blocked anyone</p>
+          </div>
+        )}
       </div>
     </MainLayout>
   );

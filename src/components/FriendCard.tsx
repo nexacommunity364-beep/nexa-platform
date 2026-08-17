@@ -1,6 +1,5 @@
 import React from 'react';
 import { UserPlus, MessageSquare, MoreVertical } from 'lucide-react';
-import { useAppStore } from '../store/appStore';
 import { MOCK_USERS } from '../data/mockData';
 
 interface FriendCardProps {

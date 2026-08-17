@@ -42,7 +42,7 @@ export const ToastContainer: React.FC = () => {
   React.useEffect(() => {
     const listener = () => setToastList(Array.from(toasts.entries()));
     listeners.add(listener);
-    return () => listeners.delete(listener);
+    return () => { listeners.delete(listener); };
   }, []);
 
   const typeClasses = {
