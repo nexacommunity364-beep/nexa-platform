@@ -1,6 +1,6 @@
 import React, { ReactNode } from 'react';
 import { Sidebar } from './Sidebar';
-import { TopNavigation } from './TopNavigation';
+import { Header } from './Header';
 
 interface MainLayoutProps {
   children: ReactNode;
@@ -8,10 +8,16 @@ interface MainLayoutProps {
 
 export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
   return (
-    <div className="flex h-screen bg-dark-900 text-white overflow-hidden">
+    <div className="flex h-screen bg-dark-900">
+      {/* Sidebar */}
       <Sidebar />
-      <div className="flex flex-col flex-1 overflow-hidden">
-        <TopNavigation />
+
+      {/* Main Content */}
+      <div className="flex-1 flex flex-col overflow-hidden">
+        {/* Header */}
+        <Header />
+
+        {/* Content */}
         <main className="flex-1 overflow-y-auto">
           {children}
         </main>
